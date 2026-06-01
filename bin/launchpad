@@ -4,7 +4,8 @@
  '[lambdaisland.launchpad :as launchpad])
 
 (launchpad/main
- {:middleware []
+ {:namespace-maps false
+  :middleware []
   :eval-forms []
   :pre-steps
   [(launchpad/run-process {:cmd '[npm install]})

@@ -1,17 +1,15 @@
 (ns clojurians-log.http
-  (:require [ring.adapter.jetty :as jetty]
-            [clojurians-log.config :as config]
-            [lambdaisland.ornament :as o]
-            [lambdaisland.hiccup :as hiccup]
-            [clojurians-log.routes :as routes]
-            [clojure.java.io :as io]
-            [muuntaja.core :as m]
-            [muuntaja.format.core :as muuntaja-format]
-            [reitit.ring.middleware.muuntaja :as muuntaja-middleware]
-            [reitit.ring.middleware.parameters :as parameters]
-            [reitit.ring :as ring])
-  (:import (java.io OutputStream)
-           (org.eclipse.jetty.server Server)))
+  (:require
+   [clojurians-log.routes :as routes]
+   [lambdaisland.hiccup :as hiccup]
+   [muuntaja.core :as m]
+   [muuntaja.format.core :as muuntaja-format]
+   [reitit.ring :as ring]
+   [reitit.ring.middleware.muuntaja :as muuntaja-middleware]
+   [reitit.ring.middleware.parameters :as parameters]
+   [ring.adapter.jetty :as jetty])
+  (:import
+   (java.io OutputStream)))
 
 (defn html-encoder
   "Muuntaja encoder that renders HTML
@@ -67,15 +65,12 @@
     (ring/create-default-handler
      {:not-found (constantly {:status 404 :body "Page not found."})}))))
 
-(def http-server (atom nil))
-
-(defn start-server []
-  (println (str "Starting jetty on http://localhost:" (config/get :http/port)))
-  (let [config {}
-        server (jetty/run-jetty #((app) %) {:port (config/get :http/port)
-                                            :join? false})]
-    (reset! http-server server)))
-
-(defn stop-server []
-  (when-let [server @http-server]
-    (.stop server)))
+(def component
+  {:start
+   (fn [{:keys [port]}]
+     (println (str "Starting jetty on http://localhost:" port))
+     (jetty/run-jetty #((app) %) {:port port
+                                  :join? false}))
+   :stop
+   (fn [server]
+     (.stop server))})

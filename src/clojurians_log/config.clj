@@ -1,12 +1,16 @@
 (ns clojurians-log.config
-  (:require [lambdaisland.config :as config]))
+  (:refer-clojure :exclude [get])
+  (:require
+   [lambdaisland.config :as config]))
+
+(def prefix "clojurians-log")
 
 (def config
   (config/create
-   {:env :dev :prefix "clojurians-log"}))
+   {:env :dev :prefix prefix}))
 
-(defn get [k]
-  (config/get config k))
-
-(get :slack-socket/bot-token)
-(config/reload! config)
+(def get (partial config/get config))
+(def source (partial config/source config))
+(def sources (partial config/sources config))
+(def entries (partial config/entries config))
+(def reload! (partial config/reload! config))

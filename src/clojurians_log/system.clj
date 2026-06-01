@@ -1,19 +1,31 @@
 (ns clojurians-log.system
   (:require
-   [clojurians-log.config]
-   [clojurians-log.sentry]
-   [clojurians-log.db]
-   [clojurians-log.http]
-   [clojure.java.io :as io]
-   [clojure.edn :as edn]))
+   [clojurians-log.config :as config]
+   [lambdaisland.makina.app :as app]))
 
-(defn stop! []
-  (clojurians-log.http/stop-server))
+(def system
+  (app/create
+   {:prefix config/prefix
+    :data-readers {'config config/get}}))
 
-(defn go [& [{:keys [profile]
-              :or {profile :dev}}]]
-  (println "Starting with profile: " profile)
-  (clojurians-log.sentry/init!)
-  (clojurians-log.db/init!)
-  (clojurians-log.http/start-server)
-  #_(clojurians-log.slack.socket/init!))
+(def load! (partial app/load! system))
+(def start! (partial app/start! system))
+(def stop! (partial app/stop! system))
+(def value (partial app/value system))
+(def state (partial app/state system))
+(def component (partial app/component system))
+(def refresh (partial app/refresh `system))
+(def refresh-all (partial app/refresh-all `system))
+
+(comment
+  (load!)
+  (start!)
+  (refresh-all)
+  @system
+  (value)
+  (state)
+  (start! [:clojurians-log.db])
+  (stop!  [:clojurians-log.db])
+  )
+
+;; =>

@@ -1,11 +1,11 @@
 (ns clojurians-log.sentry
-  (:require [clojurians-log.config :as config])
-  (:import (io.sentry Sentry)))
+  (:import
+   (io.sentry Sentry)))
 
-(defn init! []
-  (when-let [sentry-dsn (config/get :sentry/dsn)]
+(defn component [{:keys [dsn debug? trace-sample-rate]}]
+  (when dsn
     (.init Sentry (fn [opts]
                     (doto opts
-                      (.setDsn sentry-dsn)
-                      (.setTracesSampleRate 1.0)
-                      (.setDebug true))))))
+                      (.setDsn dsn)
+                      (.setTracesSampleRate trace-sample-rate)
+                      (.setDebug debug?))))))
