@@ -1,0 +1,14 @@
+{:clojurians-log.sentry
+ {:dsn               #config :sentry/dsn
+  :debug?            true
+  :trace-sample-rate 1.0}
+
+ :clojurians-log.db
+ {:port     #config :db/port
+  :user     #config :db/user
+  :password #config :db/password
+  :name     #config :db/name
+  :type     #config :db/type}
+
+ :clojurians-log.http
+ {:port #config :http/port}}

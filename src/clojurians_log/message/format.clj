@@ -108,9 +108,9 @@
   [:code (hiccup/raw content)])
 
 (defmethod segment->hiccup :user [[type content]]
-  [:span {:class "inline-block bg-blue-100 text-blue-800 text-blue no-underline"}
+  [:span.user-mention
    [:a {:href (str "/_/users/" (:user-id content))}
-                   "@" (:user-name content)]])
+    "@" (:user-name content)]])
 
 (defmethod segment->hiccup :channel-id [[type content name]]
   [:i "#" (if-not (empty? name)

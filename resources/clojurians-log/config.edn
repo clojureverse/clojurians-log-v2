@@ -12,5 +12,4 @@
  :slack-socket/app-token "" #_"xapp-12345-67890"
  :slack-socket/bot-token "" #_"xoxb-12345-67890"
  :slack-socket/tx-log-directory "./tmp/tx-logs" #_"/data/tx-logs"
-
  }
