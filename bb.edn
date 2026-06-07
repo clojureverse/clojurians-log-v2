@@ -1,2 +1,2 @@
-{:deps {com.lambdaisland/launchpad {:local/root "/home/arne/lambdaisland/launchpad"}#_{:mvn/version "0.35.156-alpha"}
-        com.lambdaisland/cli {:local/root "/home/arne/lambdaisland/cli"} #_{:mvn/version "0.19.78"}}}
+{:deps {com.lambdaisland/launchpad {:mvn/version "0.49.220-alpha"}
+        com.lambdaisland/cli {:mvn/version "1.30.130"}}}

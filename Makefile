@@ -10,8 +10,5 @@ pgcli:
 deploy:
 	cd ops && ansible-playbook deploy.yml -i hosts
 
-dev:
-	npm run dev
-
 sync-config:
 	rsync -a resources/config/ ark2:/srv/ox/clojurians-log-v2/resources/config

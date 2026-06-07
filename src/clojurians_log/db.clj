@@ -41,7 +41,6 @@
   (migratus/down (get-migration-config) 20111206154000))
 
 (defn component [{:keys [type user port password name]}]
-  (prn "HERE2")
   ;; TODO: add connection pooling
   (let [data-source (jdbc/get-datasource {:dbtype type
                                           :user user

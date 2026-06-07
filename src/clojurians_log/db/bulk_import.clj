@@ -5,9 +5,9 @@
    [clojurians-log.db :as db]
    [clojurians-log.db.import :as import]
    [clojurians-log.db.queries :as queries]
-   [clojurians-log.slack.api :as slack-api]
    [clojurians-log.system :as system]
    [clojurians-log.utils :as utils]
+   [co.gaiwan.slack.api :as slack]
    [honey.sql :as sql]
    [next.jdbc :as jdbc]))
 
@@ -24,9 +24,10 @@
           data (into []
                      (comp
                       (map #(utils/select-keys-nested-as
-                             % [{:keys :id
+                             % [{:keys :channel/id
                                  :rename :slack-id}
-                                :name
+                                {:keys :channel/name
+                                 :rename :name}
                                 {:keys [:topic :value]
                                  :rename :topic}
                                 {:keys [:purpose :value]
@@ -166,30 +167,21 @@
                      (/ (double (- (. System (nanoTime)) start#)) 1000000000.0)
                      channel))))
 
-(defn log-bot-channels []
-  (let [slack-conn (slack-api/conn (config/get :slack-socket/bot-token))
-        bot-chans (slack-api/get-users-conversations
-                   slack-conn
-                   {:user (config/get :slack/bot-user)})]
-    (mapv :name bot-chans)))
+(defn log-bot-channels [conn]
+  (mapv :channel/name (slack/user-conversations conn)))
 
 (defn member-import-from-api!
   "Imports members from the Slack API."
   [slack-conn]
-  (let [slack-users (slack-api/get-users slack-conn)]
+  (let [slack-users (slack/users slack-conn)]
     (doall
-     (mapcat #(members %) (partition-all 100 slack-users)))
-    #_(doall
-       (apply
-        concat
-        (for [p-users (partition-all 100 slack-users)]
-          (members p-users))))))
+     (mapcat #(members %) (partition-all 100 slack-users)))))
 
 (defn channel-import-from-api!
   "Imports channels from the Slack API."
   [slack-conn]
-  (let [slack-channels (slack-api/get-channels slack-conn)
-        allowed-chans (set (log-bot-channels))
+  (let [slack-channels        (slack/conversations slack-conn)
+        allowed-chans         (set (log-bot-channels))
         slack-channels-to-log (filter #(contains? allowed-chans (:name %)) slack-channels)]
     (insert-channels! slack-channels-to-log)))
 
@@ -197,9 +189,9 @@
   "Import channel data and member data from path of slack data directory.
   If path is nil, imports from the slack api."
   [& [{:keys [path]
-       :or {path nil}}]]
-  (let [slack-conn (slack-api/conn (config/get :slack-socket/bot-token))
-        chan-file (io/file path "channels.json")
+       :or   {path nil}}]]
+  (let [slack-conn   (slack/conn (config/get :slack-socket/bot-token))
+        chan-file    (io/file path "channels.json")
         members-file (io/file path "users.json")
         imported-channels
         (if (.exists chan-file)
@@ -209,12 +201,14 @@
         imported-members-list
         (if (.exists members-file)
           (members members-file)
-          (member-import-from-api! slack-conn)
-          )
-        stats {:imported-channels-count
-               (-> imported-channels first :next.jdbc/update-count)
-               :imported-members-count
-               (apply + (map #(-> % first :next.jdbc/update-count) imported-members-list))}]
+          (member-import-from-api! slack-conn))
+        _            (def +imported-channels imported-channels)
+        _            (def +imported-members-list imported-members-list)
+        _            (def +members-file members-file)
+        stats        {:imported-channels-count
+                      (-> imported-channels first :next.jdbc/update-count)
+                      :imported-members-count
+                      (apply + (map #(-> % first :next.jdbc/update-count) imported-members-list))}]
     (println stats)
     stats))
 
@@ -229,11 +223,9 @@
     (println (sql/format sqlmap))
     (db/execute! (sql/format sqlmap)))
 
-  (def slack-conn (slack-api/conn (config/get :slack-socket/bot-token)))
-  slack-conn
+  (def conn (slack/conn (config/get :slack-socket/bot-token)))
 
-  (channel-member-import "../slack_exports/2025-03-01--2024-12-14/")
-  (log-bot-channels)
+  (log-bot-channels conn)
 
   (def path "../clojurians-log-data/sample_data")
 
@@ -277,5 +269,9 @@
                  [:= :channel-id 1]]
          :limit 2}]
     (db/execute! (sql/format query {:return-keys true})))
+
+  (channel-member-import)
+
+  "../slack_exports/2025-03-01--2024-12-14/"
 
   ,)

@@ -8,7 +8,7 @@
         lambdaisland/glogi {:mvn/version "1.4.177"}
         com.lambdaisland/config {:mvn/version "0.10.37"}
         io.pedestal/pedestal.log       {:mvn/version "0.8.1"}
-        ch.qos.logback/logback-classic {:mvn/version "1.5.33"}
+        ch.qos.logback/logback-classic {:mvn/version "1.5.34"}
 
         ;; http
         ring/ring {:mvn/version "1.15.4"}
@@ -16,6 +16,9 @@
         hato/hato {:mvn/version "1.0.0"}
         lambdaisland/webstuff {:git/url "https://github.com/lambdaisland/webstuff"
                                :git/sha "f3ae2a2d41a4335d3da1757a3a21aa1dd1125eb1"}
+
+        ;; styling
+        com.lambdaisland/ornament {:mvn/version "1.17.150"}
 
         ;; data formats
         org.clojure/data.json {:mvn/version "2.5.2"}
@@ -36,7 +39,8 @@
         migratus/migratus {:mvn/version "1.6.6"}
 
         ;; error
-        io.sentry/sentry {:mvn/version "8.43.0"}
+        io.sentry/sentry {:mvn/version "8.43.1"}
+        com.lambdaisland/makina {:mvn/version "0.7.32"}
         }
  :aliases {:dev
            {:extra-paths ["dev" "test"]
