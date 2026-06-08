@@ -75,33 +75,6 @@
              [:= :channel-id channel-id]
              [:= :ts ts]]}))
 
-(defn member->tx [user]
-  (let [data (-> user
-                 utils/select-keys-nested-as
-                 [{:keys [:id]
-                   :rename :slack-id}
-                  :name :team-id :is-admin :is-bot
-                  :tz :tz-offset :tz-label
-                  :is-email-confirmed :deleted :bot-id
-                  [:profile :real-name] [:profile :real-name-normalized]
-                  [:profile :display-name] [:profile :display-name-normalized]
-                  [:profile :first-name] [:profile :last-name]
-                  [:profile :title] [:profile :skype] [:profile :phone]
-                  ;;[:profile :image-original]
-                  [:profile :image-24] [:profile :image-32] [:profile :image-48]
-                  [:profile :image-72] [:profile :image-192] [:profile :image-512]])]
-    {:insert-into [:member]
-     :values data
-     :on-conflict :slack-id
-     :do-update-set {:fields :name :team-id :is-admin :is-bot
-                     :tz :tz-offset :tz-label
-                     :deleted :bot-id :is-email-confirmed
-                     :real-name :real-name-normalized
-                     :display-name :display-name-normalized
-                     :first-name :last-name
-                     :title :skype :phone
-                     :image-24 :image-32 :image-48 :image-72 :image-192 :image-512}}))
-
 (defn channel->tx [{:keys [id name-normalized name]} cachs]
   {:insert-into [:channel]
    :values {:slack-id id

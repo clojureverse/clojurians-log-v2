@@ -14,7 +14,7 @@
      [:link {:rel "stylesheet" :href "/assets/fonts/inter.css"}]
      (if (io/resource "public/css/compiled/ornament.css")
        [:link {:rel "stylesheet" :href "/assets/css/compiled/ornament.css"}]
-       [:style {:type "text/css" :id "ornament"} (o/defined-styles)])
+       [:link {:rel "stylesheet" :href "/styles.css"}])
      extra-head]
     [:body
      [:div#app

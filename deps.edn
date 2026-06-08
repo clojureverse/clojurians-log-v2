@@ -1,54 +1,58 @@
 {:paths ["src" "resources"]
- :deps {;; core
-        org.clojure/clojure {:mvn/version "1.12.5"}
-        org.clojure/core.async {:mvn/version "1.9.865"}
+ :deps
+ {;; core
+  org.clojure/clojure    {:mvn/version "1.12.5"}
+  org.clojure/core.async {:mvn/version "1.9.865"}
 
-        ;; app setup & config
-        aero/aero           {:mvn/version "1.1.6"}
-        lambdaisland/glogi {:mvn/version "1.4.177"}
-        com.lambdaisland/config {:mvn/version "0.10.37"}
-        io.pedestal/pedestal.log       {:mvn/version "0.8.1"}
-        ch.qos.logback/logback-classic {:mvn/version "1.5.34"}
+  ;; app setup & config
+  aero/aero                      {:mvn/version "1.1.6"}
+  lambdaisland/glogi             {:mvn/version "1.4.177"}
+  com.lambdaisland/config        {:mvn/version "0.10.37"}
+  io.pedestal/pedestal.log       {:mvn/version "0.8.1"}
+  ch.qos.logback/logback-classic {:mvn/version "1.5.34"}
 
-        ;; http
-        ring/ring {:mvn/version "1.15.4"}
-        metosin/reitit {:mvn/version "0.10.1"}
-        hato/hato {:mvn/version "1.0.0"}
-        lambdaisland/webstuff {:git/url "https://github.com/lambdaisland/webstuff"
-                               :git/sha "f3ae2a2d41a4335d3da1757a3a21aa1dd1125eb1"}
+  ;; http
+  ring/ring             {:mvn/version "1.15.4"}
+  metosin/reitit        {:mvn/version "0.10.1"}
+  hato/hato             {:mvn/version "1.0.0"}
+  lambdaisland/webstuff {:git/url "https://github.com/lambdaisland/webstuff"
+                         :git/sha "f3ae2a2d41a4335d3da1757a3a21aa1dd1125eb1"}
 
-        ;; styling
-        com.lambdaisland/ornament {:mvn/version "1.17.150"}
+  ;; styling
+  com.lambdaisland/ornament {:mvn/version "1.17.150"}
 
-        ;; data formats
-        org.clojure/data.json {:mvn/version "2.5.2"}
-        hiccup/hiccup         {:mvn/version "2.0.0"}
-        markdown-to-hiccup/markdown-to-hiccup {:mvn/version "0.6.2"}
-        lambdaisland/uri      {:mvn/version "1.19.155"}
-        camel-snake-kebab/camel-snake-kebab {:mvn/version "0.4.3"}
-        metosin/malli {:mvn/version "0.20.1"}
+  ;; data formats
+  hiccup/hiccup                         {:mvn/version "2.0.0"}
+  markdown-to-hiccup/markdown-to-hiccup {:mvn/version "0.6.2"}
+  lambdaisland/uri                      {:mvn/version "1.19.155"}
+  camel-snake-kebab/camel-snake-kebab   {:mvn/version "0.4.3"}
+  metosin/malli                         {:mvn/version "0.20.1"}
+  com.cnuernber/charred                 {:mvn/version "1.038"}
 
-        ;; Slack SDK
-        co.gaiwan/clj-slack {:git/url "https://github.com/GaiwanTeam/clj-slack"
-                             :git/sha "2a53aa80d287ead5ead392a6cc259fc199a5d2ab"}
+  ;; Slack SDK
+  co.gaiwan/clj-slack {:git/url "https://github.com/GaiwanTeam/clj-slack"
+                       :git/sha "2a53aa80d287ead5ead392a6cc259fc199a5d2ab"}
 
-        ;; db
-        com.github.seancorfield/next.jdbc {:mvn/version "1.3.1108"}
-        org.postgresql/postgresql {:mvn/version "42.7.11"}
-        com.github.seancorfield/honeysql {:mvn/version "2.7.1368"}
-        migratus/migratus {:mvn/version "1.6.6"}
+  ;; db
+  com.github.seancorfield/next.jdbc {:mvn/version "1.3.1108"}
+  org.postgresql/postgresql         {:mvn/version "42.7.11"}
+  com.github.seancorfield/honeysql  {:mvn/version "2.7.1368"}
+  migratus/migratus                 {:mvn/version "1.6.6"}
+  clj-pgcopy/clj-pgcopy             {:mvn/version "0.1.3"}
 
-        ;; error
-        io.sentry/sentry {:mvn/version "8.43.1"}
-        com.lambdaisland/makina {:mvn/version "0.7.32"}
-        }
- :aliases {:dev
-           {:extra-paths ["dev" "test"]
-            :extra-deps {lambdaisland/kaocha {:mvn/version "1.91.1392"}}
-            :jvm-opts ["-Duser.timezone=UTC"]}
+  ;; error
+  io.sentry/sentry        {:mvn/version "8.43.1"}
+  com.lambdaisland/makina {:mvn/version "0.7.32"}
+  }
 
-           :run-prod
-           {:exec-fn clojurians-log.system/go
-            :exec-args {:profile :prod}
-            :jvm-opts ["-Duser.timezone=UTC"
-                       "-Dclojure.server.repl={:port 50505 :accept clojure.core.server/repl}"]}}}
+ :aliases
+ {:dev
+  {:extra-paths ["dev" "test"]
+   :extra-deps  {lambdaisland/kaocha {:mvn/version "1.91.1392"}}
+   :jvm-opts    ["-Duser.timezone=UTC"]}
+
+  :run-prod
+  {:exec-fn   clojurians-log.system/go
+   :exec-args {:profile :prod}
+   :jvm-opts  ["-Duser.timezone=UTC"
+               "-Dclojure.server.repl={:port 50505 :accept clojure.core.server/repl}"]}}}

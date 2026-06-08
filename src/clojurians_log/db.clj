@@ -8,13 +8,16 @@
 (defn conn []
   (system/component :clojurians-log.db))
 
-(defn get-migration-config [conn]
-  {:store                :database
-   :migration-dir        "migrations/"
-   ;; :init-script          "init.sql"
-   ;; :init-in-transaction? false
-   :migration-table-name "migrations"
-   :db                   {:datasource (jdbc/get-datasource conn)}})
+(defn get-migration-config
+  ([]
+   (get-migration-config (conn)))
+  ([conn]
+   {:store                :database
+    :migration-dir        "migrations/"
+    ;; :init-script          "init.sql"
+    ;; :init-in-transaction? false
+    :migration-table-name "migrations"
+    :db                   {:datasource (jdbc/get-datasource conn)}}))
 
 (defn execute! [& args]
   (apply jdbc/execute! (conn) args))
@@ -25,20 +28,26 @@
 (defn migrate-create [name]
   (migratus/create (get-migration-config) name))
 
-(defn migrate [conn]
-  (migratus/migrate (get-migration-config conn)))
+(defn migrate
+  ([]
+   (migratus/migrate (get-migration-config)))
+  ([conn]
+   (migratus/migrate (get-migration-config conn))))
 
-(defn migrate-rollback []
+(defn rollback
   "rollback the migration with the latest timestamp"
+  []
   (migratus/rollback (get-migration-config)))
 
-(defn migrate-up [id]
+(defn migrate-up
   "bring up migrations matching the ids"
-  (migratus/up (get-migration-config) 20111206154000))
+  [id]
+  (migratus/up (get-migration-config) id))
 
-(defn migrate-down [id]
+(defn migrate-down
   "bring down migrations matching the ids"
-  (migratus/down (get-migration-config) 20111206154000))
+  [id]
+  (migratus/down (get-migration-config) id))
 
 (defn component [{:keys [type user port password name]}]
   ;; TODO: add connection pooling
@@ -53,5 +62,7 @@
       migrate)))
 
 (comment
+  (rollback)
   (migrate)
+  (migrate-create "add-indices")
   )

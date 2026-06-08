@@ -2,6 +2,11 @@
   (:require [lambdaisland.ornament :as o]))
 
 (o/defrules global-styles
+  [:html
+   {:font-family "'Inter', sans-serif"
+    :-webkit-font-smoothing "antialiased"
+    :-moz-osx-font-smoothing "grayscale"}]
+  [:body {:margin 0 :padding 0}]
   [:pre
    :bg-gray-200 :text-gray-900 :text-sm :font-mono :rounded :p-3 :mt-2 :whitespace-pre :overflow-scroll
    {:border "1px solid #f3f4f6"}]
@@ -23,7 +28,4 @@
   [:.emoji {:font-style "normal"}]
   [:.user-mention :inline-block :bg-blue-100 :text-blue-800 :no-underline]
   [:.user-mention [:a {:text-decoration "none" :color "inherit"}]]
-  [:html
-   {:font-family "'Inter', sans-serif"
-    :-webkit-font-smoothing "antialiased"
-    :-moz-osx-font-smoothing "grayscale"}])
+  )

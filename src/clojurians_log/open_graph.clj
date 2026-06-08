@@ -1,12 +1,11 @@
-(ns clojurians-log.open-graph
-  (:require [clojure.data.json :as json]))
+(ns clojurians-log.open-graph)
 
 ;; defaults
 (def twitter-site "@lambdaisland")
 (def twitter-creator "@LambdaIsland")
 (def title "Clojure Slack Archives")
 (def description "Capturing, conserving, and making this discourse of Clojurians slack community complete, easily accessible, and searchable.")
-(def url "https://clojurians-log-v2.oxal.org")
+(def url "https://clojurians-log-v2.clojureverse.org")
 
 (defn twitter-card-tags [{:keys [tw-type tw-site tw-creator url
                                  title description image]

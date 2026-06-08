@@ -40,32 +40,33 @@
     data))
 
 (defn replies-for-messages [channel-id message-ids]
-  (let [sqlmap {:select [:message.* :member.*]
-                :from [:message]
-                :where [:and
-                        [:= :message.channel-id channel-id]
-                        [:in :message.parent message-ids]]
-                ;; TODO: should sort based on ts instead of id
-                :order-by [:message.id]
-                :join [:member [:= :message.member-id :member.id]]
-                }
-        query (sql/format sqlmap)
-        data (db/execute! query {:builder-fn rs/as-kebab-maps})]
-    data))
+  (when (seq message-ids)
+    (let [sqlmap {:select [:message.* :member.*]
+                  :from [:message]
+                  :where [:and
+                          [:= :message.channel-id channel-id]
+                          [:in :message.parent message-ids]]
+                  ;; TODO: should sort based on ts instead of id
+                  :order-by [:message.id]
+                  :join [:member [:= :message.member-id :member.id]]}
+          query (sql/format sqlmap)
+          data (db/execute! query {:builder-fn rs/as-kebab-maps})]
+      data)))
 
 (defn reactions-for-messages [channel-id message-ids]
-  (let [sqlmap {:select [[[:count :reaction.*]] :reaction.reaction :reaction.message-id]
-                :from [:reaction]
-                :where [:and
-                        [:= :reaction.channel-id channel-id]
-                        [:in :reaction.message-id message-ids]]
-                ;; TODO: should sort based on ts instead of id
-                :order-by [:reaction.message-id]
-                :group-by [:reaction.message-id :reaction.reaction]
-                }
-        query (sql/format sqlmap)
-        data (db/execute! query {:builder-fn rs/as-kebab-maps})]
-    data))
+  (when (seq message-ids)
+    (let [sqlmap {:select [[[:count :reaction.*]] :reaction.reaction :reaction.message-id]
+                  :from [:reaction]
+                  :where [:and
+                          [:= :reaction.channel-id channel-id]
+                          [:in :reaction.message-id message-ids]]
+                  ;; TODO: should sort based on ts instead of id
+                  :order-by [:reaction.message-id]
+                  :group-by [:reaction.message-id :reaction.reaction]
+                  }
+          query (sql/format sqlmap)
+          data (db/execute! query {:builder-fn rs/as-kebab-maps})]
+      data)))
 
 (defn channel-by-name [channel-name]
   (let [sqlmap {:select [:*]

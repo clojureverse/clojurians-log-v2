@@ -1,7 +1,8 @@
 (ns clojurians-log.utils
-  (:require [clojure.data.json :as json]
-            [camel-snake-kebab.core :as csk]
-            [clojure.java.io :as io]))
+  (:require
+   [camel-snake-kebab.core :as csk]
+   [charred.api :as charred]
+   [clojure.java.io :as io]))
 
 (defn select-keys-nested-as
   [m paths]
@@ -16,8 +17,3 @@
     (into {}
           (map select)
           paths)))
-
-(defn read-json-from-file [file]
-  (-> file
-      slurp
-      (json/read-str :key-fn csk/->kebab-case-keyword)))

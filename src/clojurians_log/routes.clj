@@ -1,10 +1,10 @@
 (ns clojurians-log.routes
   (:require
-   [clojurians-log.layout :as layout]
    [clojurians-log.components.common :as common]
    [clojurians-log.db.queries :as queries]
+   [clojurians-log.layout :as layout]
    [clojurians-log.open-graph :as og]
-   [lambdaisland.ornament :as o]))
+   [lambdaisland.ornament :as ornament]))
 
 (defn handler [request]
   (let [channels (queries/all-channels)]
@@ -71,11 +71,17 @@
                 (og/social-tags {:title (str "Search Clojure Slack Archive")})
                 [common/search-page data]])}))
 
+(defn GET-styles [req]
+  {:status 200
+   :headers {"content-type" "text/css"}
+   :body (ornament/defined-styles {:compress? false})})
+
 (defn routes []
   [["/" {:get handler}]
    ["/about" {:get handler}]
    ["/sitemap" {:get handler}]
    ["/healthcheck" {:get handler}]
    ["/search" {:get search-handler :parameter {:query {:q string?}}}]
+   ["/styles.css" {:get GET-styles}]
    ["/:channel" {:get channel-handler}]
    ["/:channel/:date" {:get channel-date-handler}]])

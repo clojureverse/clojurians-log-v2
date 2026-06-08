@@ -1,4 +1,4 @@
-CREATE table if not exists channel (
+CREATE table channel (
  id integer primary key generated always as identity,
  slack_id text unique not null,
  name text not null,
@@ -7,7 +7,7 @@ CREATE table if not exists channel (
 );
 --;;
 
-CREATE table if not exists member (
+CREATE table member (
  id integer primary key generated always as identity,
  slack_id text unique not null,
  team_id text,
@@ -40,7 +40,7 @@ CREATE table if not exists member (
  );
 --;;
 
-CREATE table if not exists file (
+CREATE table file (
  id integer primary key generated always as identity,
  slack_id text not null,
  channel_id integer references channel,
@@ -62,7 +62,7 @@ CREATE table if not exists file (
 );
 --;;
 
-CREATE table if not exists message (
+CREATE table message (
  id integer primary key generated always as identity,
  channel_id integer references channel,
  member_id integer references member,
@@ -75,7 +75,7 @@ CREATE table if not exists message (
 );
 --;;
 
-CREATE table if not exists reaction (
+CREATE table reaction (
  id integer primary key generated always as identity,
  member_id integer references member,
  channel_id integer references channel,

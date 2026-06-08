@@ -1,7 +1,7 @@
 (ns clojurians-log.components.common
   (:require
-   [clojurians-log.message.format :as mformat]
    [clojurians-log.components.icons :as icons]
+   [co.gaiwan.slack.markdown :as mformat]
    [lambdaisland.ornament :as o]))
 
 (o/defstyled avatar-img :img
@@ -81,6 +81,7 @@
    {:background-color "#fff"
     :opacity 0.25}])
 
+#_
 (o/defstyled team-sidebar :div
   :bg-indigo-900 :flex-none :p-4
   {:color "#d6bcfa"}
@@ -103,7 +104,7 @@
      [:div.team-label "⌘3"]]]))
 
 (o/defstyled channel-sidebar :div
-  :bg-indigo-700 :flex-none :w-64 :pb-6 :overflow-hidden :overflow-y-scroll
+  :bg-indigo-700 :flex-none :w-64 :pb-6 :overflow-x-hidden :overflow-y-scroll
   :absolute :inset-y-0 :left-0 :z-10
   {:color "#d6bcfa"
    :transform "translateX(-100%)"
@@ -156,6 +157,7 @@
      [:div.sidebar-section-label
       [:div.sidebar-section-label-text "Apps"]]]]))
 
+
 (o/defstyled app-top-bar :div
   :border-b :flex :px-6 :py-2 :items-center :flex-none
   [:.title-row
@@ -172,15 +174,15 @@
     :text-overflow "ellipsis"
     :white-space "nowrap"}
    :text-sm]
-  [:.mobile-menu-btn
-   {:border "none"
-    :background "none"}
+  [:#mobile-menu-btn
+   :md:hidden :border-none
+   {:background "none"}
    :p-4]
   [:.menu-btn-icon
    {:width "1.5rem"
     :height "1.5rem"}]
   [:.search-area
-   :ml-auto :block]
+   :ml-auto :hidden :md:block]
   [:.search-container
    :relative]
   [:.top-bar-search-input
@@ -199,9 +201,9 @@
     [:div.title-row
      [:div.title-area
       [:h3.title-text title]
-      (let [text (mformat/message->text subtitle {})]
-        [:div.subtitle-text {:title text} text])]
-     [:button.mobile-menu-btn {:id "mobile-menu-btn"}
+      #_(let [text (mformat/message->text subtitle {})]
+          [:div.subtitle-text {:title text} text])]
+     [:button#mobile-menu-btn
       [:div.menu-btn-icon icons/menu]]]
     [:div.search-area
      [:div.search-container
@@ -241,9 +243,18 @@
 (o/defstyled footer-text :p
   :text-sm)
 
+(defn user-id-handler [slack-id->name]
+  (fn [[_ user-id] _]
+    [:span.username
+     [:a #_{:href (str "https://someteam.slack.com/team/" user-id)}
+      "@" (get slack-id->name user-id user-id)]]))
+
+(defn emoji-handler [[_ code] _]
+  [:span.emoji (get @mformat/standard-emoji-map code code)])
+
 (defn message [{:member/keys [image-192 display-name]
                 :message/keys [text created-at deleted-ts]
-                :keys [reactions]} member-cache-id-name]
+                :keys [reactions]} slack-id->name]
   [message-row
    [avatar-img {:src (if deleted-ts "/assets/imgs/trash.png" image-192)}]
    [message-content
@@ -252,7 +263,12 @@
        [username-span display-name]
        [timestamp-span (str " " created-at)]])
     [message-body
-     (mformat/message->hiccup text member-cache-id-name)]
+     (mformat/markdown->hiccup
+      text
+      {:handlers
+       {:user-id (user-id-handler slack-id->name)
+        :emoji emoji-handler}}
+      )]
     [reactions-row {:class "slack-message__reactions"}
      (for [reaction reactions]
        [:div.slack-message__reaction
@@ -288,7 +304,9 @@
      [:li "Search for `macro -magic` for finding a macro which isn't magical"]
      [:li "Search for `\"macro magic\"` for finding the most magical macros"]]
     [footer-text "Made with 💜 by "
-     [:a {:href "https://twitter.com/oxalorg"} "@oxalorg"]]]])
+     [:a {:href "https://miteshshah.com/"} "@oxalorg"]
+     " & "
+     [:a {:href "https://arnebrasseur.net/"} "@plexus"]]]])
 
 (defn search-page [{:keys [query messages]}]
   [slack-layout {:title (str "Search results for \"" query "\"")

@@ -48,7 +48,8 @@
     (let [resp (handler request)]
       (if-let [view (get resp :view)]
         (update resp :body vary-meta assoc :view-fn
-                (comp hiccup/render view))))))
+                (comp hiccup/render view))
+        resp))))
 
 (defn app []
   (ring/ring-handler
