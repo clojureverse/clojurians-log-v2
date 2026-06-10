@@ -1,6 +1,7 @@
 (ns clojurians-log.db
   (:require
    [clojurians-log.system :as system]
+   [hikari-cp.core :as hikari]
    [migratus.core :as migratus]
    [next.jdbc :as jdbc]
    [next.jdbc.date-time :as jdbc.date-time]))
@@ -49,16 +50,10 @@
   [id]
   (migratus/down (get-migration-config) id))
 
-(defn component [{:keys [type user port password name]}]
-  ;; TODO: add connection pooling
-  (let [data-source (jdbc/get-datasource {:dbtype type
-                                          :user user
-                                          :port port
-                                          :password password
-                                          :dbname name
-                                          :serverTimezone "UTC"})]
+(defn component [{:hikari/keys [config] :as opts}]
+  (let [data-source (hikari/make-datasource config)]
     (jdbc.date-time/read-as-instant)
-    (doto (jdbc/with-options data-source jdbc/unqualified-snake-kebab-opts)
+    (doto (jdbc/with-options {:datasource data-source} jdbc/unqualified-snake-kebab-opts)
       migrate)))
 
 (comment

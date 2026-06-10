@@ -4,11 +4,25 @@
   :trace-sample-rate 1.0}
 
  :clojurians-log.db
- {:port     #config :db/port
-  :user     #config :db/user
-  :password #config :db/password
-  :name     #config :db/name
-  :type     #config :db/type}
+ {:hikari/config
+  {:adapter       #config :db/type
+   :username      #config :db/user
+   :password      #config :db/password
+   :database-name #config :db/name
+   :server-name   #config :db/hostname
+   :port-number   #config :db/port
+   ;; :allow-pool-suspension false
+   ;; :auto-commit           true
+   ;; :read-only             false
+   ;; :connection-timeout    30000
+   ;; :validation-timeout    5000
+   ;; :idle-timeout          600000
+   ;; :max-lifetime          1800000
+   ;; :minimum-idle          10
+   ;; :maximum-pool-size     10
+   ;; :pool-name             "db-pool"
+   ;; :register-mbeans       false
+   }}
 
  :clojurians-log.http
  {:port #config :http/port}}
