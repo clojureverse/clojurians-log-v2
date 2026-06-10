@@ -56,6 +56,22 @@
            [:= :message.channel_id :pm.channel_id]
            [:= :message.ts :pm.ts]]})
 
+(def staging->reactions
+  {:insert-into [:reaction
+                 {:select [[:member.id :member_id]
+                           [:channel.id :channel_id]
+                           [:message.id :message_id]
+                           [:emoji :reaction]]
+                  :from   :reaction_staging
+                  :join   [:channel [:= :channel.slack_id :reaction_staging.channel]
+                           :member [:= :member.slack_id :reaction_staging.user_id]
+                           :message [:and
+                                     [:= :channel.id :message.channel_id]
+                                     [:= :reaction_staging.ts :message.ts]]]}]
+   :columns     [:member_id :channel_id :message_id :reaction]
+   :on-conflict [:member_id :channel_id :message_id :reaction]
+   :do-nothing  :true})
+
 (defn load-export-messages [export-dir]
   (let [known-channels (into
                         #{}
@@ -83,6 +99,7 @@
         cols [:channel_id :member_id :text :ts :parent_ts]]
     (jdbc/with-transaction [conn (db/conn)]
       (jdbc/execute! conn ["TRUNCATE message_staging"])
+      (jdbc/execute! conn ["TRUNCATE reaction_staging"])
       (pgcopy/copy-into-table! conn
                                :message_staging
                                cols
@@ -91,12 +108,32 @@
                                      :when text
                                      :when (not (str/includes? text (str (char 0))))]
                                  [channel_id user text ts thread_ts]))
-
+      (pgcopy/copy-into-table! conn
+                               :reaction_staging
+                               [:channel :ts :user_id :emoji]
+                               (for [{:strs [ts channel_id reactions]} messages
+                                     {:strs [name users]} reactions
+                                     user users]
+                                 [channel_id ts user name]))
       (jdbc/execute! conn (sql/format staging->message-qry))
-      (jdbc/execute! conn (sql/format staging->thread-qry)))))
+      (jdbc/execute! conn (sql/format staging->thread-qry))
+      (jdbc/execute! conn (sql/format staging->reactions))
+      )))
+
 
 (comment
+  (def export-dir "/home/arne/Clojurians-Log/export/")
+  (time
+   (import-messages! export-dir))
+  ;; 122 seconds
   (db/execute! ["SELECT * FROM message LIMIT 10"])
   (db/execute! ["SELECT * FROM message_staging LIMIT 10"])
   (db/execute! ["UPDATE message SET parent = NULL"])
-)
+
+  (time
+   (jdbc/execute!
+    (db/conn)
+    (sql/format
+     )))
+
+  )

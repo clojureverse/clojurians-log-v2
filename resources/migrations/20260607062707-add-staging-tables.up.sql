@@ -24,9 +24,8 @@ CREATE table message_staging (
 
 --;;
 CREATE table reaction_staging (
- member_id text,
- channel_id text,
- message_id text,
- reaction text,
- url text
+ channel text,
+ ts text,
+ user_id text,
+ emoji text
 );
