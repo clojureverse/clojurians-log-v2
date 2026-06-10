@@ -90,11 +90,9 @@
 (defn reaction-removed->tx [{:strs [item user reaction] :as event}
                             {:keys [member-slack->db-id
                                     chan-slack-id->id] :as cache}]
-  (prn event)
   (let [{:strs [channel ts]} item
         channel-id (get chan-slack-id->id channel)
         member-id (get member-slack->db-id user)]
-    (prn channel channel-id (type chan-slack-id->id))
     {:delete []
      :from [:reaction]
      :where [:and

@@ -1,14 +1,9 @@
 (ns clojurians-log.db.slack-import
   (:require
-   [camel-snake-kebab.core :as csk]
-   [camel-snake-kebab.extras :as cske]
-   [clojure.data.json :as json]
-   [clojure.java.io :as io]
    [clojurians-log.db :as db]
    [clojurians-log.db.import :as import]
-   [clojurians-log.db.queries :as queries]
    [honey.sql :as sql]
-   [next.jdbc :as jdbc]))
+   [lambdaisland.glogc :as log]))
 
 (defmulti from-event
   "Expects slack socket live events as maps in kebab case keywords"
@@ -68,4 +63,5 @@
 
 (defmethod from-event :default
   [{:strs [type subtype]} cache]
-  (println "Event import not handled" [type subtype]))
+  (log/warn :event/not-handled [type subtype]
+            :message "Event import not handled"))

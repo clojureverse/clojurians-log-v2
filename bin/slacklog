@@ -1,0 +1,83 @@
+#!/usr/bin/env -S clojure -M
+
+(ns bin.slacklog
+  (:require
+   [clojurians-log.config :as config]
+   [clojurians-log.db.api-import :as api-import]
+   [clojurians-log.db.queries :as qry]
+   [clojurians-log.db.slack-export-import :as import-export]
+   [clojurians-log.db.slack-import :as si]
+   [clojurians-log.system :as system]
+   [co.gaiwan.slack.archive :as archive]
+   [co.gaiwan.slack.normalize :as normalize]
+   [co.gaiwan.slack.raw-archive :as raw]
+   [lambdaisland.cli :as cli])
+  (:import
+   (ch.qos.logback.classic Level Logger)
+   org.slf4j.LoggerFactory))
+
+(def init {})
+
+(defn wrap-verbosity [cmd]
+  ;; This is a li/cli bug, needs fixing. default case is handled differently
+  (fn [{:keys [verbose] :as opts}]
+    (let [level-str      (case verbose
+                           0 "ERROR"
+                           1 "WARN"
+                           2 "INFO"
+                           3 "DEBUG"
+                           4 "TRACE")
+          level          (Level/valueOf level-str)
+          logger-context ^ch.qos.logback.classic.LoggerContext (LoggerFactory/getILoggerFactory)]
+      (doseq [logger (.getLoggerList logger-context)]
+        (.setLevel logger level)))
+    (cmd opts)))
+
+(defn import-archive
+  "Import an archive as created by slack-event-sink"
+  [{:keys [dir]}]
+  (let [cache (qry/get-cache)]
+    (run! #(si/from-event % cache) (raw/dir-event-seq dir))))
+
+(defn import-api-users
+  "Import users from the Slack API"
+  [opts]
+  (api-import/import-users!))
+
+(defn import-api-channels
+  "Import channels from the Slack API"
+  [opts]
+  (api-import/import-channels!))
+
+(defn import-export
+  "Import a Slack export (from the admin interface), unzipped"
+  [{:keys [dir]}]
+  (import-export/import-messages! dir))
+
+(def commands
+  ["import"
+   {:commands ["archive <dir>" #'import-archive
+               "api-users" #'import-api-users
+               "api-channels" #'import-api-channels
+               "export <dir>" #'import-export]}])
+
+(def flags
+  ["-v, --verbose" {:doc "Increase verbosity"
+                    :default 0}
+   "-h, --help" "Show help text for a (sub-)command"])
+
+(defn wrap-system [cmd]
+  (fn [opts]
+    (system/start! [:clojurians-log.db])
+    (cmd opts)))
+
+(cli/dispatch*
+ {:name "bin/slacklog"
+  :init init
+  :flags flags
+  :commands commands
+  :middleware [wrap-system wrap-verbosity]})
+
+;; Local Variables:
+;; mode:clojure
+;; End:
