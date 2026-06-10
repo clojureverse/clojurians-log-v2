@@ -12,8 +12,8 @@
 
 (defmulti from-event
   "Expects slack socket live events as maps in kebab case keywords"
-  (fn [event cache]
-    [(:type event) (:subtype event)]))
+  (fn [{:strs [type subtype]} cache]
+    [type subtype]))
 
 (defmethod from-event ["message" nil]
   [event cache]
@@ -24,22 +24,20 @@
     (db/execute! sql-query)))
 
 (defmethod from-event ["message" "message_changed"]
-  [event cache]
-  (-> (:message event)
-      (assoc :channel (:channel event))
+  [{:strs [message channel] :as event} cache]
+  (-> message
+      (assoc "channel" channel)
       (from-event cache)))
 
 (defmethod from-event ["message" "message_deleted"]
   [event cache]
   (let [query (-> event
-                  (import/message-deleted->tx cache))
+                  (import/message-tombstone->tx cache))
         sql-query (sql/format query)]
     (db/execute! sql-query)))
 
 (defmethod from-event ["message" "tombstone"]
   [event cache]
-  (println "TOOOOOMB")
-  (println event)
   (let [query (-> event
                   (import/message-tombstone->tx cache))
         sql-query (sql/format query)]
@@ -47,8 +45,7 @@
 
 (defmethod from-event ["reaction_added" nil]
   [event cache]
-  (let [query (-> event
-                  (import/reaction->tx cache))]
+  (let [query (import/reaction->tx event cache)]
     (db/execute! (sql/format query))))
 
 (defmethod from-event ["reaction_removed" nil]
@@ -66,34 +63,9 @@
 (defmethod from-event ["channel_rename" nil]
   [event cache]
   (-> event
-      (assoc :type "channel_created")
+      (assoc "type" "channel_created")
       (from-event cache)))
 
 (defmethod from-event :default
-  [event cache]
-  (println "Event import not caught of type: " (:type event)))
-
-(defn from-file [f & {:keys [is-json?]}]
-  (let [read-func (if is-json? json/read-str read-string)]
-    (with-open [reader (io/reader f)]
-      (doseq [line (line-seq reader)]
-        (let [event (->> line
-                         read-func
-                         (cske/transform-keys csk/->kebab-case-keyword))]
-          (from-event event (queries/get-cache)))))))
-
-(defn from-dir [dir & {:keys [is-json?] :as opts}]
-  (let [dir (io/file dir)
-        files (->> dir
-                   file-seq
-                   (filter #(.isFile %))
-                   sort)]
-    (doseq [f files]
-      (from-file f opts))))
-
-(comment
-  (def ds (user/ds))
-  (from-file "/tmp/2022-05-17.edn" )
-  (from-file "/Users/ox/Downloads/does-slack-archive/2021-05-01.txt" {:is-json? true})
-  (json/read-str "{\"hello\": \"world\"}")
-  )
+  [{:strs [type subtype]} cache]
+  (println "Event import not handled" [type subtype]))

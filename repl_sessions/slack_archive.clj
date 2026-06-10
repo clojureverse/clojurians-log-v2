@@ -1,13 +1,20 @@
 (ns repl-sessions.slack-archive
   (:require
    [clojurians-log.config :as config]
+   [clojurians-log.db.queries :as qry]
+   [clojurians-log.db.slack-import :as si]
    [co.gaiwan.slack.archive :as archive]
    [co.gaiwan.slack.normalize :as normalize]
    [co.gaiwan.slack.raw-archive :as raw]))
 
-(def cljians-log-dir "/home/arne/repos/clojurians-log")
+(def archive-dir "/home/arne/Clojurians-Log/archive")
 
-(def raw-events (raw/dir-event-seq cljians-log-dir))
+(def raw-events (raw/dir-event-seq archive-dir))
+
+(let [cache (qry/get-cache)]
+  (run! #(si/from-event % cache) raw-events))
+
+
 
 (time
  (def arch (archive/raw->archive cljians-log-dir (archive/archive "/tmp/cljians-archive"))))
