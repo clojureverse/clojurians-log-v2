@@ -70,7 +70,7 @@
   {:start
    (fn [{:keys [port]}]
      (println (str "Starting jetty on http://localhost:" port))
-     (jetty/run-jetty #((app) %) {:port port
+     (jetty/run-jetty #((app) %) {:port (Long. port)
                                   :join? false}))
    :stop
    (fn [server]
