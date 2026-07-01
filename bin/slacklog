@@ -62,7 +62,7 @@
                                                           :key k}]))
         (keys (read-string (slurp (io/resource "clojurians-log/config.edn"))))))
 
-(defn start
+(defn run
   "Start Clojurians-log web app"
   [opts]
   (system/start!))
@@ -80,7 +80,7 @@
                "api-channels" #'import-api-channels
                "export <dir>" #'import-export]
     :middleware [wrap-db-sys]}
-   "start" {:command #'start}])
+   "run" {:command #'run}])
 
 (def flags
   (conj
