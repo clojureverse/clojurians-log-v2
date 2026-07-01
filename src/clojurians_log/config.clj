@@ -1,13 +1,17 @@
 (ns clojurians-log.config
   (:refer-clojure :exclude [get])
   (:require
-   [lambdaisland.config :as config]))
+   [lambdaisland.config :as config]
+   [lambdaisland.config.systemd-creds :as system-creds]
+   [lambdaisland.config.cli :as cli]))
 
 (def prefix "clojurians-log")
 
 (def config
-  (config/create
-   {:env :dev :prefix prefix}))
+  (-> {:env :dev :prefix prefix}
+      config/create
+      system-creds/add-provider
+      cli/add-provider))
 
 (def get (partial config/get config))
 (def source (partial config/source config))

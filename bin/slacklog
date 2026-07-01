@@ -2,6 +2,7 @@
 
 (ns bin.slacklog
   (:require
+   [clojure.java.io :as io]
    [clojurians-log.config :as config]
    [clojurians-log.db.api-import :as api-import]
    [clojurians-log.db.queries :as qry]
@@ -54,29 +55,46 @@
   [{:keys [dir]}]
   (import-export/import-messages! dir))
 
-(def commands
-  ["import"
-   {:commands ["archive <dir>" #'import-archive
-               "api-users" #'import-api-users
-               "api-channels" #'import-api-channels
-               "export <dir>" #'import-export]}])
+(def config-flags
+  (into []
+        (mapcat (fn [k]
+                  [(str "--" (namespace k) "-" (name k)) {:doc (str "Set " k)
+                                                          :key k}]))
+        (keys (read-string (slurp (io/resource "clojurians-log/config.edn"))))))
 
-(def flags
-  ["-v, --verbose" {:doc "Increase verbosity"
-                    :default 0}
-   "-h, --help" "Show help text for a (sub-)command"])
+(defn start
+  "Start Clojurians-log web app"
+  [opts]
+  (system/start!))
 
-(defn wrap-system [cmd]
+(defn wrap-db-sys [cmd]
   (fn [opts]
     (system/start! [:clojurians-log.db])
     (cmd opts)))
+
+(def commands
+  ["import"
+   {:doc "Data import tasks"
+    :commands ["archive <dir>" #'import-archive
+               "api-users" #'import-api-users
+               "api-channels" #'import-api-channels
+               "export <dir>" #'import-export]
+    :middleware [wrap-db-sys]}
+   "start" {:command #'start}])
+
+(def flags
+  (conj
+   config-flags
+   "-v, --verbose" {:doc "Increase verbosity"
+                    :default 0}
+   "-h, --help" "Show help text for a (sub-)command"))
 
 (cli/dispatch*
  {:name "bin/slacklog"
   :init init
   :flags flags
   :commands commands
-  :middleware [wrap-system wrap-verbosity]})
+  :middleware [wrap-verbosity]})
 
 ;; Local Variables:
 ;; mode:clojure

@@ -5,14 +5,14 @@
 
   ;; app setup & config
   aero/aero                      {:mvn/version "1.1.6"}
-  ch.qos.logback/logback-classic {:mvn/version "1.5.34"}
-  com.lambdaisland/config        {:mvn/version "0.10.37"}
+  ch.qos.logback/logback-classic {:mvn/version "1.5.37"}
+  com.lambdaisland/config        {:mvn/version "0.11.42"}
   com.lambdaisland/makina        {:mvn/version "0.7.32"}
   io.pedestal/pedestal.log       {:mvn/version "0.8.1"}
   lambdaisland/glogi             {:mvn/version "1.4.177"}
 
   ;; http
-  ring/ring      {:mvn/version "1.15.4"}
+  ring/ring      {:mvn/version "1.15.5"}
   metosin/reitit {:mvn/version "0.10.1"}
   hato/hato      {:mvn/version "1.0.0"}
 
@@ -21,7 +21,7 @@
 
   ;; data formats
   camel-snake-kebab/camel-snake-kebab   {:mvn/version "0.4.3"}
-  com.cnuernber/charred                 {:mvn/version "1.038"}
+  com.cnuernber/charred                 {:mvn/version "1.039"}
   com.lambdaisland/hiccup               {:mvn/version "0.14.67"}
   lambdaisland/uri                      {:mvn/version "1.19.155"}
   markdown-to-hiccup/markdown-to-hiccup {:mvn/version "0.6.2"}
@@ -32,15 +32,15 @@
                        :git/sha "2a53aa80d287ead5ead392a6cc259fc199a5d2ab"}
 
   ;; db
-  com.github.seancorfield/next.jdbc {:mvn/version "1.3.1108"}
-  org.postgresql/postgresql         {:mvn/version "42.7.11"}
-  com.github.seancorfield/honeysql  {:mvn/version "2.7.1368"}
+  com.github.seancorfield/next.jdbc {:mvn/version "1.3.1118"}
+  org.postgresql/postgresql         {:mvn/version "42.7.12"}
+  com.github.seancorfield/honeysql  {:mvn/version "2.7.1399"}
   migratus/migratus                 {:mvn/version "1.6.6"}
   clj-pgcopy/clj-pgcopy             {:mvn/version "0.1.3"}
-  hikari-cp/hikari-cp               {:mvn/version "4.0.0"}
+  hikari-cp/hikari-cp               {:mvn/version "4.1.0"}
 
   ;; error
-  io.sentry/sentry {:mvn/version "8.43.1"}
+  io.sentry/sentry {:mvn/version "8.46.0"}
   }
 
  :aliases
