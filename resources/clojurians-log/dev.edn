@@ -1,1 +1,2 @@
-{:db/port "54100"}
+{:db/port 54100
+ :db/password "sekrit"}
