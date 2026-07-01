@@ -8,7 +8,7 @@
 (def prefix "clojurians-log")
 
 (def config
-  (-> {:env :dev :prefix prefix}
+  (-> {:prefix prefix}
       config/create
       system-creds/add-provider
       cli/add-provider))
