@@ -13,13 +13,17 @@
   (let [conn  (slack/conn (config/get :slack/bot-token))
         users (slack/users conn)
         cols  [:slack_id :name :display_name :image_192]]
+    (println "Importing users from API")
     (jdbc/with-transaction [conn (db/conn)]
+      (println "  Truncate staging table...")
       (jdbc/execute! conn ["TRUNCATE member_staging"])
+      (println "  Load staging table...")
       (pgcopy/copy-into-table! conn
                                :member_staging
                                cols
                                (for [{:user/keys [id name] :user-profile/keys [display-name image-192]} users]
                                  [id name display-name image-192]))
+      (println "  Copying into member table...")
       (jdbc/execute!
        conn
        (sql/format
@@ -33,17 +37,24 @@
   (let [conn     (slack/conn (config/get :slack/bot-token))
         channels (slack/user-conversations conn)
         cols     [:slack_id :name :purpose :topic]]
+    (println "Importing channels from API")
     (jdbc/with-transaction [conn (db/conn)]
+      (println "  Truncate staging table...")
       (jdbc/execute! conn ["TRUNCATE channel_staging"])
+      (println "  Load staging table...")
       (pgcopy/copy-into-table! conn
                                :channel_staging
                                cols
-                               (for [{:channel/keys [id name purpose topic]} channels
+                               (for [{:channel/keys [id name purpose topic] :as channel} channels
                                      :when (not
                                             (or
-                                             (str/includes? purpose "noindex")
-                                             (str/includes? topic "noindex")))]
-                                 [id name purpose topic]))
+                                             (and purpose (str/includes? purpose "noindex"))
+                                             (and topic (str/includes? topic "noindex"))))]
+                                 (do
+                                   (when (not (and purpose topic))
+                                     (println "PURPOSE/TOPIC MISSING:" channel))
+                                   [id name purpose topic])))
+      (println "  Copying into channel table...")
       (jdbc/execute!
        conn
        (sql/format
