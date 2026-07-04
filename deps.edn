@@ -6,7 +6,8 @@
   ;; app setup & config
   aero/aero                      {:mvn/version "1.1.6"}
   ch.qos.logback/logback-classic {:mvn/version "1.5.37"}
-  com.lambdaisland/config        {:mvn/version "0.11.42"}
+
+  com.lambdaisland/config        {:mvn/version "0.13.48"}
   com.lambdaisland/makina        {:mvn/version "0.7.32"}
   io.pedestal/pedestal.log       {:mvn/version "0.8.1"}
   lambdaisland/glogi             {:mvn/version "1.4.177"}
@@ -40,7 +41,7 @@
   hikari-cp/hikari-cp               {:mvn/version "4.1.0"}
 
   ;; error
-  io.sentry/sentry {:mvn/version "8.46.0"}
+  io.sentry/sentry {:mvn/version "8.47.0"}
   }
 
  :aliases

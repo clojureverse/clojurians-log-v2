@@ -1,2 +1,2 @@
-{:deps {com.lambdaisland/launchpad {:mvn/version "0.52.234-alpha"}
+{:deps {com.lambdaisland/launchpad {:mvn/version "0.53.238-alpha"}
         com.lambdaisland/cli {:mvn/version "1.30.130"}}}
