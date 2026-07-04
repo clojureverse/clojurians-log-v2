@@ -14,7 +14,7 @@
 
 (def ds (user/ds))
 
-(def slack-conn (clj-slack/conn (get-in (system/secrets) [:slack-socket :bot-token])))
+;; (def slack-conn (clj-slack/conn (get-in (system/secrets) [:slack-socket :bot-token])))
 
 (queries/all-channels ds)
 (def imported-channels (bulk-import/channel-import-from-api! slack-conn))

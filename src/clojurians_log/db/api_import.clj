@@ -10,7 +10,7 @@
    [next.jdbc :as jdbc]))
 
 (defn import-users! []
-  (let [conn  (slack/conn (config/get :slack-socket/bot-token))
+  (let [conn  (slack/conn (config/get :slack/bot-token))
         users (slack/users conn)
         cols  [:slack_id :name :display_name :image_192]]
     (jdbc/with-transaction [conn (db/conn)]
@@ -30,7 +30,7 @@
          :returning     [:slack-id :name]})))))
 
 (defn import-channels! []
-  (let [conn     (slack/conn (config/get :slack-socket/bot-token))
+  (let [conn     (slack/conn (config/get :slack/bot-token))
         channels (slack/user-conversations conn)
         cols     [:slack_id :name :purpose :topic]]
     (jdbc/with-transaction [conn (db/conn)]

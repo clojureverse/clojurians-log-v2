@@ -23,7 +23,7 @@
 
 
 
-(def archive (archive/fetch-api-resources arch (config/get :slack-socket/bot-token)))
+;; (def archive (archive/fetch-api-resources arch (config/get :slack-socket/bot-token)))
 
 (enrich/enrich
  (normalize/message-tree
