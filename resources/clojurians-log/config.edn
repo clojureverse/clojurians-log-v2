@@ -3,6 +3,7 @@
  :db/name     "clojurians-log"
  :db/type     "postgresql"
  :db/hostname "localhost"
+
  :sentry/dsn  nil
 
  :http/port 9090

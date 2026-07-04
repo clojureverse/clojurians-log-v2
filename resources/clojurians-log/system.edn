@@ -7,7 +7,7 @@
  {:hikari/config
   {:adapter       #config :db/type
    :username      #config :db/user
-   :password      #config :db/password
+   :password      #or [#config :postgres/password #config :db/password]
    :database-name #config :db/name
    :server-name   #config :db/hostname
    :port-number   #config :db/port
