@@ -7,7 +7,7 @@
   aero/aero                      {:mvn/version "1.1.6"}
   ch.qos.logback/logback-classic {:mvn/version "1.5.37"}
 
-  com.lambdaisland/config        {:mvn/version "0.14.53"}
+  com.lambdaisland/config        {:mvn/version "0.15.56"}
   com.lambdaisland/makina        {:mvn/version "0.7.32"}
   io.pedestal/pedestal.log       {:mvn/version "0.8.1"}
   lambdaisland/glogi             {:mvn/version "1.4.177"}
