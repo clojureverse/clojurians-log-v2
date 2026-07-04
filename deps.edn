@@ -30,7 +30,7 @@
 
   ;; Slack SDK
   co.gaiwan/clj-slack {:git/url "https://github.com/GaiwanTeam/clj-slack"
-                       :git/sha "2a53aa80d287ead5ead392a6cc259fc199a5d2ab"}
+                       :git/sha "91b5057bcfa8ec28b5ec523b021f4406b2afb3b3"}
 
   ;; db
   com.github.seancorfield/next.jdbc {:mvn/version "1.3.1118"}
