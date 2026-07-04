@@ -97,9 +97,12 @@
 (defn import-messages! [export-dir]
   (let [messages (load-export-messages export-dir)
         cols [:channel_id :member_id :text :ts :parent_ts]]
+    (println "Importing messages!")
     (jdbc/with-transaction [conn (db/conn)]
+      (println "   Truncating staging tables...")
       (jdbc/execute! conn ["TRUNCATE message_staging"])
       (jdbc/execute! conn ["TRUNCATE reaction_staging"])
+      (println "   Populating message_staging...")
       (pgcopy/copy-into-table! conn
                                :message_staging
                                cols
@@ -108,6 +111,7 @@
                                      :when text
                                      :when (not (str/includes? text (str (char 0))))]
                                  [channel_id user text ts thread_ts]))
+      (println "   Populating reaction_staging...")
       (pgcopy/copy-into-table! conn
                                :reaction_staging
                                [:channel :ts :user_id :emoji]
@@ -115,10 +119,13 @@
                                      {:strs [name users]} reactions
                                      user users]
                                  [channel_id ts user name]))
+      (println "   Copying messages to message table...")
       (jdbc/execute! conn (sql/format staging->message-qry))
+      (println "   Copying threads to message table...")
       (jdbc/execute! conn (sql/format staging->thread-qry))
+      (println "   Copying reactions to reaction table...")
       (jdbc/execute! conn (sql/format staging->reactions))
-      )))
+      (println "   Import finished. Yay!"))))
 
 
 (comment

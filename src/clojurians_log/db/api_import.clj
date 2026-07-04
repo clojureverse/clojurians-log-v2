@@ -31,7 +31,8 @@
          :columns       cols
          :on-conflict   :slack-id
          :do-update-set {:fields (vec (next cols))}
-         :returning     [:slack-id :name]})))))
+         :returning     [:slack-id :name]}))
+      (println "   User import finished. Yay!"))))
 
 (defn import-channels! []
   (let [conn     (slack/conn (config/get :slack/bot-token))
@@ -62,4 +63,5 @@
          :columns       cols
          :on-conflict   :slack-id
          :do-update-set {:fields (vec (next cols))}
-         :returning     [:slack-id :name]})))))
+         :returning     [:slack-id :name]}))
+      (println "   Channel import finished. Yay!"))))
