@@ -82,7 +82,7 @@
   [["/" {:get home-handler}]
    ["/about" {:get home-handler}]
    ["/sitemap" {:get home-handler}]
-   ["/health" {:get (fn [_] {:status 200 "OK"})}]
+   ["/health" {:get (fn [_] {:status 200 :body "OK"})}]
    ["/search" {:get search-handler :parameter {:query {:q string?}}}]
    ["/styles.css" {:get GET-styles}]
    ["/:channel" {:get channel-handler}]
