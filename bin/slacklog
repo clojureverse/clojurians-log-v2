@@ -58,8 +58,8 @@
 (def config-flags
   (into []
         (mapcat (fn [k]
-                  [(str "--" (namespace k) "-" (name k)) {:doc (str "Set " k)
-                                                          :key k}]))
+                  [(str "--" (namespace k) "-" (name k) " <" (name k) ">") {:doc (str "Set " k)
+                                                                            :key k}]))
         (keys (read-string (slurp (io/resource "clojurians-log/config.edn"))))))
 
 (defn run

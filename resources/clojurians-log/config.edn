@@ -3,6 +3,7 @@
  :db/name     "clojurians-log"
  :db/type     "postgresql"
  :db/hostname "localhost"
+ :db/password nil
 
  :sentry/dsn nil
 
