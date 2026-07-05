@@ -9,4 +9,6 @@
  :http/port 9090
 
  :slack/bot-token "" #_ "xoxb-12345-67890"
+
+ :styles/precompile false
  }

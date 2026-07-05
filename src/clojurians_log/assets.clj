@@ -17,15 +17,15 @@
 
 (def css
   ["assets/fonts/inter.css"
-   (if (io/resource "public/css/compiled/ornament.css")
-     "assets/css/compiled/ornament.css"
+   (if (io/resource "assets/ornament.css")
+     "assets/ornament.css"
      "styles.css")])
 
 (def js
   ["assets/js/main.js"])
 
 (defn make-route [path content-type]
-  (let [content (.getBytes (slurp path) "UTF-8")
+  (let [^bytes content (.getBytes ^String (slurp path) "UTF-8")
         etag (md5-etag content)
         size (alength content)
         get-res {:status 200
@@ -38,7 +38,6 @@
         not-modified {:status 304 :body ""}]
     [(str "/" path)
      {:get (fn [{:keys [headers] :as req}]
-             (prn "GET" path)
              (if (or (= etag (get headers "if-none-match"))
                      (= "*" (get headers "if-none-match")))
                not-modified

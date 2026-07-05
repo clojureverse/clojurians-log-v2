@@ -12,3 +12,4 @@ target
 .#*
 infra/.terraform
 clj_simple_stats.duckdb
+assets/ornament.css

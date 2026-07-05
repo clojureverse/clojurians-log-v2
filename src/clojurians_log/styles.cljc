@@ -1,5 +1,7 @@
 (ns clojurians-log.styles
-  (:require [lambdaisland.ornament :as o]))
+  "Fixed styles and style compilation logic"
+  (:require
+   [lambdaisland.ornament :as o]))
 
 (o/defrules global-styles
   [:html
@@ -29,3 +31,12 @@
   [:.user-mention :inline-block :bg-blue-100 :text-blue-800 :no-underline]
   [:.user-mention [:a {:text-decoration "none" :color "inherit"}]]
   )
+
+(defn spit-styles []
+  (require 'clojurians-log.http) ;; make sure all components are loaded
+  (let [styles (o/defined-styles {:compress? false})]
+    (println "Writing assets/ornament.css" (alength (.getBytes ^String styles)) "bytes")
+    (spit "assets/ornament.css" styles)))
+
+(defn component [{:keys [precompile]}]
+  (when precompile (spit-styles)))

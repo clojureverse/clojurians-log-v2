@@ -1,4 +1,5 @@
 (ns clojurians-log.routes
+  "Handlers and routes"
   (:require
    [clojurians-log.components.common :as common]
    [clojurians-log.db.queries :as queries]
@@ -6,7 +7,7 @@
    [clojurians-log.open-graph :as og]
    [lambdaisland.ornament :as ornament]))
 
-(defn handler [request]
+(defn home-handler [request]
   (let [channels (queries/all-channels)]
     {:status 200
      :body   {:channels channels}
@@ -78,10 +79,10 @@
    :body (ornament/defined-styles {:compress? false})})
 
 (defn routes []
-  [["/" {:get handler}]
-   ["/about" {:get handler}]
-   ["/sitemap" {:get handler}]
-   ["/healthcheck" {:get handler}]
+  [["/" {:get home-handler}]
+   ["/about" {:get home-handler}]
+   ["/sitemap" {:get home-handler}]
+   ["/health" {:get (fn [_] {:status 200 "OK"})}]
    ["/search" {:get search-handler :parameter {:query {:q string?}}}]
    ["/styles.css" {:get GET-styles}]
    ["/:channel" {:get channel-handler}]
