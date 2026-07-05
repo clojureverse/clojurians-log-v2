@@ -1,0 +1,11 @@
+DROP INDEX IF EXISTS idx_message_channel_ts;
+--;;
+CREATE INDEX IF NOT EXISTS message_search_idx ON message USING GIN (to_tsvector('english', text));
+--;;
+CREATE INDEX IF NOT EXISTS message_channel_created_date_idx ON message (channel_id, (("created_at" AT TIME ZONE 'UTC')::date));
+--;;
+CREATE INDEX IF NOT EXISTS message_channel_parent_idx ON message (channel_id, parent);
+--;;
+CREATE INDEX IF NOT EXISTS reaction_channel_message_idx ON reaction (channel_id, message_id);
+--;;
+CREATE INDEX IF NOT EXISTS channel_name_idx ON channel (name);

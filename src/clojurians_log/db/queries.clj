@@ -31,11 +31,9 @@
                 :where [:and
                         [:is :parent nil]
                         [:= :message.channel-id channel-id]
-                        [:= [[:cast :message.created-at :DATE]] [:cast date :DATE]]]
-                ;; TODO: should sort based on ts instead of id
+                        [:raw (str "((message.created_at AT TIME ZONE 'UTC')::date) = '" date "'::date")]]
                 :order-by [:message.id]
-                :join [:member [:= :message.member-id :member.id]]
-                }
+                :join [:member [:= :message.member-id :member.id]]}
         query (sql/format sqlmap)]
     (db/execute! query {:builder-fn rs/as-kebab-maps})))
 
@@ -76,14 +74,14 @@
 
 (defn channel-message-counts-by-date [channel-id]
   (let [sqlmap {:select [[[:count :*]]
-                         [[:cast :created-at :date]]]
+                         [[:raw "(message.created_at AT TIME ZONE 'UTC')::date"] :created-at]]
                 :from [:message]
                 :limit 300
                 :where [:and
                         [:= :channel-id channel-id]
                         [:<> :created-at nil]]
-                :order-by [[:created-at :desc]]
-                :group-by [[:cast :created-at :date]]}
+                :order-by [[[:raw "(message.created_at AT TIME ZONE 'UTC')::date"] :desc]]
+                :group-by [[:raw "(message.created_at AT TIME ZONE 'UTC')::date"]]}
         data (db/execute! (sql/format sqlmap))]
     data))
 
@@ -105,8 +103,16 @@
 
 (def member-cache-id-name (memo/ttl member-cache-id-name* :ttl/threshold 60000))
 
+(defn search-messages-count [search-query]
+  (let [sqlmap {:select [[[:count :*] :count]]
+                :from [:message]
+                :where [[:raw ["to_tsvector('english', text) @@ websearch_to_tsquery('english'," [:param :search-query] ")"]]]}
+        query (sql/format sqlmap {:params {:search-query search-query}})
+        data (db/execute! query {:builder-fn rs/as-kebab-maps})]
+    (:count (first data))))
+
 (defn search-messages [search-query]
-  (let [sqlmap {:select [:message.* :member.* [[:over [[:count :*]]] :full-count]]
+  (let [sqlmap {:select [:message.* :member.*]
                 :from [:message]
                 :limit 200
                 :join [:member [:= :message.member-id :member.id]]

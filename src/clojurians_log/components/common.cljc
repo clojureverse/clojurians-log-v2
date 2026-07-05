@@ -316,10 +316,10 @@
      " & "
      [:a {:href "https://arnebrasseur.net/"} "@plexus"]]]])
 
-(defn search-page [{:keys [query messages]}]
+(defn search-page [{:keys [query messages count]}]
   [slack-layout {:title (str "Search results for \"" query "\"")
                  :subtitle (str "in entire clojurians slack archive")}
-   [:p "Found " (-> messages first :full-count) " results"]
+   [:p "Found " count " results"]
    (for [msg messages]
      [message msg {}])])
 

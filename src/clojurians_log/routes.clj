@@ -63,11 +63,13 @@
                 [common/channel-date-page data]])}))
 
 (defn search-handler [{:keys [query-params] :as req}]
-  (let [query    (get query-params "q")
-        messages (queries/search-messages query)]
+  (let [query       (get query-params "q")
+        messages    (queries/search-messages query)
+        count       (queries/search-messages-count query)]
     {:status 200
      :body   {:query    query
-              :messages messages}
+              :messages messages
+              :count    count}
      :view   (fn [data]
                [layout/base
                 (og/social-tags {:title (str "Search Clojure Slack Archive")})
