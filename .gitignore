@@ -11,3 +11,4 @@ target
 .DS_Store
 .#*
 infra/.terraform
+clj_simple_stats.duckdb

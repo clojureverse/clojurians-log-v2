@@ -15,11 +15,13 @@
   {:color "#9ca3af"})
 
 (o/defstyled message-body :p
+  :m-0
   :leading-normal
   {:color "#000"})
 
 (o/defstyled message-row :div
-  :flex :items-start :mb-4 :text-sm)
+  :flex :items-start :mb-4 :text-sm
+  [:&.highlight {:background-color "#fcf87a"}])
 
 (o/defstyled message-content :div
   {:flex 1
@@ -196,11 +198,11 @@
     :color "#9ca3af"
     :height "1rem"
     :width "1rem"}]
-  ([title subtitle]
+  ([title subtitle date]
    [:<>
     [:div.title-row
      [:div.title-area
-      [:h3.title-text title]
+      [:h3.title-text title " " date]
       #_(let [text (mformat/message->text subtitle {})]
           [:div.subtitle-text {:title text} text])]
      [:button#mobile-menu-btn
@@ -227,14 +229,14 @@
    :-webkit-font-smoothing "antialiased"
    :-moz-osx-font-smoothing "grayscale"}
   :h-screen :flex
-  ([{:keys [channels title subtitle]
+  ([{:keys [channels title subtitle date]
      :or {channels []
           title "Archives"
           subtitle "🦄 Try out the search feature -->"}} & body]
    [:<>
     [channel-sidebar channels]
     [content-wrapper
-     [app-top-bar title subtitle]
+     [app-top-bar title subtitle date]
      (into [content-scroll] body)]]))
 
 (o/defstyled welcome-title :h2
@@ -252,16 +254,22 @@
 (defn emoji-handler [[_ code] _]
   [:span.emoji (get @mformat/standard-emoji-map code code)])
 
+(o/defstyled message-head :div
+  [:a :no-underline]
+  ([display-name ts created-at]
+   [:div
+    [username-span display-name]
+    [:a {:href (str "./" ts)}
+     [timestamp-span (str " " created-at)]]]))
+
 (defn message [{:member/keys [image-192 display-name]
-                :message/keys [text created-at deleted-ts]
-                :keys [reactions]} slack-id->name]
-  [message-row
+                :message/keys [text created-at deleted-ts ts]
+                :keys [reactions highlight]} slack-id->name]
+  [message-row {:class (if highlight ["highlight"] [])}
    [avatar-img {:src (if deleted-ts "/assets/imgs/trash.png" image-192)}]
    [message-content
     (when-not deleted-ts
-      [:div
-       [username-span display-name]
-       [timestamp-span (str " " created-at)]])
+      [message-head display-name ts created-at])
     [message-body
      (mformat/markdown->hiccup
       text
@@ -324,10 +332,17 @@
        [date-link {:href (str "/" (:name channel) "/" created-at)}
         (str created-at "  --- (" count " messages)")]])]])
 
-(defn channel-date-page [{:keys [channels channel messages replies date member-cache-id-name]}]
+(defn channel-date-page [{:keys [channels channel messages replies date member-cache-id-name ts]}]
   [slack-layout
-   {:channels channels :title (:name channel) :subtitle (:topic channel)}
+   {:channels channels :title (:name channel) :subtitle (:topic channel) :date date}
    (for [msg messages]
      [:div
-      [message msg member-cache-id-name]
-      [render-replies (get replies (:message/id msg)) member-cache-id-name]])])
+      [message (cond-> msg
+                 (= ts (:message/ts msg))
+                 (assoc :highlight true)) member-cache-id-name]
+      [render-replies
+       (map #(cond-> %
+               (= ts (:message/ts %))
+               (assoc :highlight true))
+            (get replies (:message/id msg)))
+       member-cache-id-name]])])

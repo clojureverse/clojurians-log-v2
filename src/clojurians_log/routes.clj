@@ -49,6 +49,7 @@
     {:status 200
      :body   {:channels               channels
               :channel                channel
+              :ts                     (:ts path-params)
               :member-cache-id-name   member-cache-id-name
               :messages               messages
               :replies                replies
@@ -84,4 +85,5 @@
    ["/search" {:get search-handler :parameter {:query {:q string?}}}]
    ["/styles.css" {:get GET-styles}]
    ["/:channel" {:get channel-handler}]
-   ["/:channel/:date" {:get channel-date-handler}]])
+   ["/:channel/:date" {:get channel-date-handler}]
+   ["/:channel/:date/:ts" {:get channel-date-handler}]])

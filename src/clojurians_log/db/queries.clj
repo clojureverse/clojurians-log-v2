@@ -1,7 +1,9 @@
 (ns clojurians-log.db.queries
+  "PostgreSQL database queries"
   (:require
-   [honey.sql :as sql]
+   [clojure.core.memoize :as memo]
    [clojurians-log.db :as db]
+   [honey.sql :as sql]
    [next.jdbc :as jdbc]
    [next.jdbc.result-set :as rs]))
 
@@ -9,9 +11,8 @@
   (let [sqlmap {:select [:message.* :member.*]
                 :from [:message]
                 :join [:member [:= :message.member-id :member.id]] }
-        query (sql/format sqlmap)
-        data (db/execute! query {:builder-fn rs/as-kebab-maps})]
-    data))
+        query (sql/format sqlmap)]
+    (db/execute! query {:builder-fn rs/as-kebab-maps})))
 
 (defn single-message [channel-id ts]
   (let [sqlmap {:select [:message.*]
@@ -20,9 +21,9 @@
                 :where [:and
                         [:= :channel-id channel-id]
                         [:= :ts ts]]}
-        query (sql/format sqlmap)
-        data (db/execute! query {:builder-fn rs/as-kebab-maps})]
-    (first data)))
+        query (sql/format sqlmap)]
+    (first
+     (db/execute! query {:builder-fn rs/as-kebab-maps}))))
 
 (defn messages-by-channel-date [channel-id date]
   (let [sqlmap {:select [:message.* :member.*]
@@ -35,9 +36,8 @@
                 :order-by [:message.id]
                 :join [:member [:= :message.member-id :member.id]]
                 }
-        query (sql/format sqlmap)
-        data (db/execute! query {:builder-fn rs/as-kebab-maps})]
-    data))
+        query (sql/format sqlmap)]
+    (db/execute! query {:builder-fn rs/as-kebab-maps})))
 
 (defn replies-for-messages [channel-id message-ids]
   (when (seq message-ids)
@@ -49,9 +49,8 @@
                   ;; TODO: should sort based on ts instead of id
                   :order-by [:message.id]
                   :join [:member [:= :message.member-id :member.id]]}
-          query (sql/format sqlmap)
-          data (db/execute! query {:builder-fn rs/as-kebab-maps})]
-      data)))
+          query (sql/format sqlmap)]
+      (db/execute! query {:builder-fn rs/as-kebab-maps}))))
 
 (defn reactions-for-messages [channel-id message-ids]
   (when (seq message-ids)
@@ -64,9 +63,8 @@
                   :order-by [:reaction.message-id]
                   :group-by [:reaction.message-id :reaction.reaction]
                   }
-          query (sql/format sqlmap)
-          data (db/execute! query {:builder-fn rs/as-kebab-maps})]
-      data)))
+          query (sql/format sqlmap)]
+      (db/execute! query {:builder-fn rs/as-kebab-maps}))))
 
 (defn channel-by-name [channel-name]
   (let [sqlmap {:select [:*]
@@ -89,20 +87,23 @@
         data (db/execute! (sql/format sqlmap))]
     data))
 
-(defn all-channels []
+(defn all-channels* []
   (let [sqlmap {:select [:channel.*]
                 :from [:channel]
-                :order-by [:channel.name]}
-        data (db/execute! (sql/format sqlmap))]
-    data))
+                :order-by [:channel.name]}]
+    (db/execute! (sql/format sqlmap))))
 
-(defn member-cache-id-name []
+(def all-channels (memo/ttl all-channels* :ttl/threshold 60000))
+
+(defn member-cache-id-name* []
   (let [sqlmap {:select [:slack-id :name]
                 :from [:member]}
         data (db/execute! (sql/format sqlmap))]
     (into {}
           (map (juxt :slack-id :name))
           data)))
+
+(def member-cache-id-name (memo/ttl member-cache-id-name* :ttl/threshold 60000))
 
 (defn search-messages [search-query]
   (let [sqlmap {:select [:message.* :member.* [[:over [[:count :*]]] :full-count]]
@@ -115,13 +116,15 @@
         data (db/execute! query {:builder-fn rs/as-kebab-maps})]
     data))
 
-(defn chan-cache []
+(defn chan-cache* []
   (let [sqlmap {:select [:id :name]
                 :from [:channel]}
         data (db/execute! (sql/format sqlmap))]
     (into {}
           (map (juxt :name :id))
           data)))
+
+(def chan-cache (memo/ttl chan-cache :ttl/threshold 60000))
 
 (defn chan-slack-id->id-cache []
   (let [sqlmap {:select [:id :slack-id]
@@ -131,13 +134,15 @@
           (map (juxt :slack-id :id))
           data)))
 
-(defn member-cache []
+(defn member-cache* []
   (let [sqlmap {:select [:id :slack-id]
                 :from [:member]}
         data (db/execute! (sql/format sqlmap))]
     (into {}
           (map (juxt :slack-id :id))
           data)))
+
+(def member-cache (memo/ttl member-cache* :ttl/threshold 60000))
 
 (defn get-cache []
   {:chan-name->id (chan-cache)

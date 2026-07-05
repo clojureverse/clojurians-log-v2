@@ -1,7 +1,9 @@
 (ns clojurians-log.layout
-  (:require [lambdaisland.ornament :as o]
-            [clojurians-log.styles :as styles]
-            [clojure.java.io :as io]))
+  (:require
+   [clojure.java.io :as io]
+   [clojurians-log.assets :as assets]
+   [clojurians-log.styles :as styles]
+   [lambdaisland.ornament :as o]))
 
 (defn base
   ([body]
@@ -11,12 +13,11 @@
     [:head
      [:meta {:charset "UTF-8"}]
      [:meta {:content "width=device-width, initial-scale=1" :name "viewport"}]
-     [:link {:rel "stylesheet" :href "/assets/fonts/inter.css"}]
-     (if (io/resource "public/css/compiled/ornament.css")
-       [:link {:rel "stylesheet" :href "/assets/css/compiled/ornament.css"}]
-       [:link {:rel "stylesheet" :href "/styles.css"}])
+     (for [f assets/css]
+       [:link {:rel "stylesheet" :href (str "/" f)}])
      extra-head]
     [:body
      [:div#app
       body]
-     [:script {:type "application/javascript" :src (str "/assets/js/main.js")}]]]))
+     (for [f assets/js]
+       [:script {:type "application/javascript" :src (str "/" f)}])]]))

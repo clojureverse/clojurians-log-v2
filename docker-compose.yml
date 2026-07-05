@@ -5,7 +5,6 @@ services:
     ports:
       - "54100:5432"
     environment:
-      POSTGRES_USER: myuser
-      POSTGRES_PASSWORD: mypass
-      POSTGRES_DB: clojurians_log
-      # POSTGRES_DB: doesarchive
+      POSTGRES_USER: clojurians-log
+      POSTGRES_PASSWORD: sekrit
+      POSTGRES_DB: clojurians-log

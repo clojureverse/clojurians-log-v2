@@ -1,4 +1,5 @@
 (ns clojurians-log.system
+  "Makina-based system with reload"
   (:require
    [clojurians-log.config :as config]
    [lambdaisland.makina.app :as app]))

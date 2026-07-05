@@ -1,5 +1,7 @@
 (ns clojurians-log.http
   (:require
+   [clj-simple-stats.core :as simple-stats]
+   [clojurians-log.assets :as assets]
    [clojurians-log.routes :as routes]
    [lambdaisland.hiccup :as hiccup]
    [muuntaja.core :as m]
@@ -54,7 +56,9 @@
 (defn app []
   (ring/ring-handler
    (ring/router
-    (routes/routes)
+    (into
+     (assets/routes)
+     (routes/routes))
     {:conflicts nil
      :data {:muuntaja   (muuntaja-instance)
             :middleware [muuntaja-middleware/format-middleware
@@ -62,9 +66,9 @@
                          view-fn-middleware]}})
    (ring/routes
     (ring/redirect-trailing-slash-handler {:method :add})
-    (ring/create-resource-handler {:path "/assets" :root "public"})
     (ring/create-default-handler
-     {:not-found (constantly {:status 404 :body "Page not found."})}))))
+     {:not-found (constantly {:status 404 :body "Page not found."})}))
+   {:middleware [simple-stats/wrap-stats]}))
 
 (def component
   {:start

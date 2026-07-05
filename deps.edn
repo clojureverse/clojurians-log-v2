@@ -7,15 +7,16 @@
   aero/aero                      {:mvn/version "1.1.6"}
   ch.qos.logback/logback-classic {:mvn/version "1.5.37"}
 
-  com.lambdaisland/config        {:mvn/version "0.15.56"}
-  com.lambdaisland/makina        {:mvn/version "0.7.32"}
-  io.pedestal/pedestal.log       {:mvn/version "0.8.1"}
-  lambdaisland/glogi             {:mvn/version "1.4.177"}
+  com.lambdaisland/config  {:mvn/version "0.15.56"}
+  com.lambdaisland/makina  {:mvn/version "0.7.32"}
+  io.pedestal/pedestal.log {:mvn/version "0.8.1"}
+  lambdaisland/glogi       {:mvn/version "1.4.177"}
 
   ;; http
-  ring/ring      {:mvn/version "1.15.5"}
-  metosin/reitit {:mvn/version "0.10.1"}
-  hato/hato      {:mvn/version "1.0.0"}
+  ring/ring                         {:mvn/version "1.15.5"}
+  metosin/reitit                    {:mvn/version "0.10.1"}
+  hato/hato                         {:mvn/version "1.0.0"}
+  io.github.tonsky/clj-simple-stats {:mvn/version "1.2.0"}
 
   ;; styling
   com.lambdaisland/ornament {:mvn/version "1.17.150"}
@@ -27,6 +28,9 @@
   lambdaisland/uri                      {:mvn/version "1.19.155"}
   markdown-to-hiccup/markdown-to-hiccup {:mvn/version "0.6.2"}
   metosin/malli                         {:mvn/version "0.20.1"}
+
+  ;; utilities
+  org.clojure/core.memoize {:mvn/version "1.2.281"}
 
   ;; Slack SDK
   co.gaiwan/clj-slack {:git/url "https://github.com/GaiwanTeam/clj-slack"
