@@ -256,27 +256,27 @@
 
 (o/defstyled message-head :div
   [:a :no-underline]
-  ([display-name ts created-at]
+  ([display-name ts created-at channel-name date]
    [:div
     [username-span display-name]
-    [:a {:href (str "./" ts)}
+    [:a {:href (str "/" channel-name "/" date "/" ts)}
      [timestamp-span (str " " created-at)]]]))
 
 (defn message [{:member/keys [image-192 display-name]
                 :message/keys [text created-at deleted-ts ts]
-                :keys [reactions highlight]} slack-id->name]
+                :keys [reactions highlight]}
+               {:keys [slack-id->name channel-name date]}]
   [message-row {:class (if highlight ["highlight"] [])}
    [avatar-img {:src (if deleted-ts "/assets/imgs/trash.png" image-192)}]
    [message-content
     (when-not deleted-ts
-      [message-head display-name ts created-at])
+      [message-head display-name ts created-at channel-name date])
     [message-body
      (mformat/markdown->hiccup
       text
       {:handlers
        {:user-id (user-id-handler slack-id->name)
-        :emoji emoji-handler}}
-      )]
+        :emoji emoji-handler}})]
     [reactions-row {:class "slack-message__reactions"}
      (for [reaction reactions]
        [:div.slack-message__reaction
@@ -284,10 +284,10 @@
         " "
         (:count reaction)])]]])
 
-(defn render-replies [replies member-cache-id-name]
+(defn render-replies [replies msg-opts]
   [reply-thread
    (for [msg replies]
-     [message msg member-cache-id-name])])
+     [message msg msg-opts])])
 
 (defn home-page [{:keys [channels]}]
   [slack-layout {:channels channels}
@@ -333,16 +333,21 @@
         (str created-at "  --- (" count " messages)")]])]])
 
 (defn channel-date-page [{:keys [channels channel messages replies date member-cache-id-name ts]}]
-  [slack-layout
-   {:channels channels :title (:name channel) :subtitle (:topic channel) :date date}
-   (for [msg messages]
-     [:div
-      [message (cond-> msg
-                 (= ts (:message/ts msg))
-                 (assoc :highlight true)) member-cache-id-name]
-      [render-replies
-       (map #(cond-> %
-               (= ts (:message/ts %))
-               (assoc :highlight true))
-            (get replies (:message/id msg)))
-       member-cache-id-name]])])
+  (let [channel-name (:name channel)
+        msg-opts {:slack-id->name member-cache-id-name
+                  :channel-name channel-name
+                  :date date}]
+    [slack-layout
+     {:channels channels :title channel-name :subtitle (:topic channel) :date date}
+     (for [msg messages]
+       [:div
+        [message (cond-> msg
+                   (= ts (:message/ts msg))
+                   (assoc :highlight true))
+         msg-opts]
+        [render-replies
+         (map #(cond-> %
+                 (= ts (:message/ts %))
+                 (assoc :highlight true))
+              (get replies (:message/id msg)))
+         msg-opts]])]))

@@ -30,37 +30,40 @@
                 [common/channel-page data]])}))
 
 (defn channel-date-handler [{:keys [path-params] :as request}]
-  (let [channel                (queries/channel-by-name (:channel path-params))
-        channels               (queries/all-channels)
-        member-cache-id-name   (queries/member-cache-id-name)
-        messages               (queries/messages-by-channel-date (:id channel) (:date path-params))
-        messages-ids           (map :message/id messages)
-        raw-replies            (queries/replies-for-messages (:id channel) messages-ids)
-        raw-replies-ids        (map :message/id raw-replies)
-        message-counts-by-date (queries/channel-message-counts-by-date (:id channel))
-        reactions              (->> (queries/reactions-for-messages
-                                     (:id channel)
-                                     (concat messages-ids
-                                             raw-replies-ids))
-                                    (group-by :reaction/message-id))
-        messages               (map #(assoc % :reactions (get reactions (:message/id %))) messages)
-        raw-replies            (map #(assoc % :reactions (get reactions (:message/id %))) raw-replies)
-        replies                (->> raw-replies
-                                    (group-by :message/parent))]
-    {:status 200
-     :body   {:channels               channels
-              :channel                channel
-              :ts                     (:ts path-params)
-              :member-cache-id-name   member-cache-id-name
-              :messages               messages
-              :replies                replies
-              :reactions              reactions
-              :date                   (:date path-params)
-              :message-counts-by-date message-counts-by-date}
-     :view   (fn [data]
-               [layout/base
-                (og/social-tags {:title (str (-> data :date) " " (-> data :channel :name) " | Clojure Slack Archive")})
-                [common/channel-date-page data]])}))
+  (let [date (:date path-params)]
+    (if-let [[_ date] (re-matches #"(\d{4}-\d{2}-\d{2})(.html)?" date)]
+      (let [channel                (queries/channel-by-name (:channel path-params))
+            channels               (queries/all-channels)
+            member-cache-id-name   (queries/member-cache-id-name)
+            messages               (queries/messages-by-channel-date (:id channel) date)
+            messages-ids           (map :message/id messages)
+            raw-replies            (queries/replies-for-messages (:id channel) messages-ids)
+            raw-replies-ids        (map :message/id raw-replies)
+            message-counts-by-date (queries/channel-message-counts-by-date (:id channel))
+            reactions              (->> (queries/reactions-for-messages
+                                         (:id channel)
+                                         (concat messages-ids
+                                                 raw-replies-ids))
+                                        (group-by :reaction/message-id))
+            messages               (map #(assoc % :reactions (get reactions (:message/id %))) messages)
+            raw-replies            (map #(assoc % :reactions (get reactions (:message/id %))) raw-replies)
+            replies                (->> raw-replies
+                                        (group-by :message/parent))]
+        {:status 200
+         :body   {:channels               channels
+                  :channel                channel
+                  :ts                     (:ts path-params)
+                  :member-cache-id-name   member-cache-id-name
+                  :messages               messages
+                  :replies                replies
+                  :reactions              reactions
+                  :date                   date
+                  :message-counts-by-date message-counts-by-date}
+         :view   (fn [data]
+                   [layout/base
+                    (og/social-tags {:title (str (-> data :date) " " (-> data :channel :name) " | Clojure Slack Archive")})
+                    [common/channel-date-page data]])})
+      {:status 404 :body "Not found"})))
 
 (defn search-handler [{:keys [query-params] :as req}]
   (let [query       (get query-params "q")
