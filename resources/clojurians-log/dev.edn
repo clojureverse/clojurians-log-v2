@@ -1,3 +1,4 @@
 ;; see docker-compose.yml
 {:db/port 54100
- :db/password "sekrit"}
+ :db/password "sekrit"
+ :app/rebuild-router-on-each-request true}

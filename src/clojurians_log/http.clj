@@ -2,6 +2,7 @@
   (:require
    [clj-simple-stats.core :as simple-stats]
    [clojurians-log.assets :as assets]
+   [clojurians-log.config :as config]
    [clojurians-log.routes :as routes]
    [lambdaisland.hiccup :as hiccup]
    [muuntaja.core :as m]
@@ -74,8 +75,11 @@
   {:start
    (fn [{:keys [port]}]
      (println (str "Starting jetty on http://localhost:" port))
-     (jetty/run-jetty #((app) %) {:port (Long. port)
-                                  :join? false}))
+     (jetty/run-jetty (if (config/get :app/rebuild-router-on-each-request)
+                        #((app) %)
+                        (app))
+                      {:port (Long. port)
+                       :join? false}))
    :stop
    (fn [server]
      (.stop server))})
