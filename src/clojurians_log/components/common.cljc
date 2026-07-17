@@ -291,18 +291,17 @@
 
 (defn home-page [{:keys [channels]}]
   [slack-layout {:channels channels}
-   [welcome-title "👋 Welcome clojurians!"]
+   [welcome-title "👋 Welcome Clojurians!"]
    [prose-wrapper
-    [:p "This is Clojurians Log v2 which is an archive of the clojurians slack."]
-    [:p "The wealth of knowledge being shared on the clojurians slack server is immense.  Capturing, conserving, and making this discourse complete, easily accessible, and searchable should greatly benefit the community as a whole."]
-    [:ul
-     [:li "Read about the Clojurists Together funding action plan: "
-      [:a {:href "https://oxal.org/blog/clojurians-log-v2-funding/"}
-       "oxal.org/blog/clojurians-log-v2-funding/"]]
-     [:li "Find the source code, create issues, or contribute at "
-      [:a {:href "https://github.com/oxalorg/clojurians-log-v2"}
-       "github.com/oxalorg/clojurians-log-v2"]]]
-    [:p "This project has received funding for 3 months by Clojurists Together. Thanks to the amazing Clojurists Together team and the awesome folks of the clojure community for their support 🥳 🌸"]
+    [:p "This is a public archive of the " [:a {:href "https://clojurians.net/" "Clojurians Slack"}] " community."]
+    [:p [:a {:href "https://arnebrasseur.net/"} "@plexus"] " handles hosting and system administration."]
+    [:p "Despite a number of measures we've taken, we still occasionally get overwhelmed by aggressive scrapers,
+         have a look at the " [:a {:href "/__kula"} "Server Monitoring"] " page to see the current situation."]
+    [:p "Under " [:a {:href "/stats"} "/stats"] " you can see how much traffic gets through to the app."]
+    [:p "This archive is served by a Clojure application backed by PostgreSQL. You can help make it better!
+         Find the source code, create issues, or contribute at "
+     [:a {:href "https://github.com/clojureverse/clojurians-log-v2"}
+      "github.com/clojureverse/clojurians-log-v2"]]
     [:h4 "Searching the entire archive"]
     [:p "Use the top right box to search over ~2 million messages from the logs! The search queries supports some special syntax like: "]
     [:ul
