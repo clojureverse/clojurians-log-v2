@@ -32,23 +32,26 @@
 (defn channel-date-handler [{:keys [path-params] :as request}]
   (let [date (:date path-params)]
     (if-let [[_ date] (re-matches #"(\d{4}-\d{2}-\d{2})(.html)?" date)]
-      (let [channel                (queries/channel-by-name (:channel path-params))
-            channels               (queries/all-channels)
-            member-cache-id-name   (queries/member-cache-id-name)
-            messages               (queries/messages-by-channel-date (:id channel) date)
-            messages-ids           (map :message/id messages)
-            raw-replies            (queries/replies-for-messages (:id channel) messages-ids)
-            raw-replies-ids        (map :message/id raw-replies)
-            message-counts-by-date (queries/channel-message-counts-by-date (:id channel))
-            reactions              (->> (queries/reactions-for-messages
-                                         (:id channel)
-                                         (concat messages-ids
-                                                 raw-replies-ids))
-                                        (group-by :reaction/message-id))
-            messages               (map #(assoc % :reactions (get reactions (:message/id %))) messages)
-            raw-replies            (map #(assoc % :reactions (get reactions (:message/id %))) raw-replies)
-            replies                (->> raw-replies
-                                        (group-by :message/parent))]
+      (let [channel-fut              (future (queries/channel-by-name (:channel path-params)))
+            channels-fut             (future (queries/all-channels))
+            member-cache-id-name-fut (future (queries/member-cache-id-name))
+            channel                  @channel-fut
+            messages-fut             (future (queries/messages-by-channel-date (:id channel) date))
+            msg-counts-fut           (future (queries/channel-message-counts-by-date (:id channel)))
+            channels                 @channels-fut
+            member-cache-id-name     @member-cache-id-name-fut
+            messages                 @messages-fut
+            message-counts-by-date   @msg-counts-fut
+            messages-ids             (map :message/id messages)
+            raw-replies              (queries/replies-for-messages (:id channel) messages-ids)
+            raw-replies-ids          (map :message/id raw-replies)
+            reactions                (->> (queries/reactions-for-messages
+                                           (:id channel)
+                                           (concat messages-ids raw-replies-ids))
+                                          (group-by :reaction/message-id))
+            messages                 (map #(assoc % :reactions (get reactions (:message/id %))) messages)
+            raw-replies              (map #(assoc % :reactions (get reactions (:message/id %))) raw-replies)
+            replies                  (->> raw-replies (group-by :message/parent))]
         {:status 200
          :body   {:channels               channels
                   :channel                channel

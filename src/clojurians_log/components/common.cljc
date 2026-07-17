@@ -293,7 +293,7 @@
   [slack-layout {:channels channels}
    [welcome-title "👋 Welcome Clojurians!"]
    [prose-wrapper
-    [:p "This is a public archive of the " [:a {:href "https://clojurians.net/" "Clojurians Slack"}] " community."]
+    [:p "This is a public archive of the " [:a {:href "https://clojurians.net/"} "Clojurians Slack"] " community."]
     [:p [:a {:href "https://arnebrasseur.net/"} "@plexus"] " handles hosting and system administration."]
     [:p "Despite a number of measures we've taken, we still occasionally get overwhelmed by aggressive scrapers,
          have a look at the " [:a {:href "/__kula"} "Server Monitoring"] " page to see the current situation."]
