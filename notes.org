@@ -4,6 +4,7 @@ Prod setup
 Presentation
 - [X] Clean up intro text
 - [ ] Calendar view per channel
+- [ ] Policy documents
 
 Bugs/missing/improvements
 - [ ] Message count for each date is not correct, doesn't take thread_ts into account
@@ -15,8 +16,7 @@ Bugs/missing/improvements
 - [ ] Handle files/images
 
 Data import
-- [ ] slack-event-sink -> use event ts not message ts to determine file name
-- [ ] Systemd timer for regular import
+- [X] Connect slack-event-sink via socket
 
 Traefik
 - [ ] Clean up accesslog unneeded fields https://doc.traefik.io/traefik/reference/install-configuration/observability/logs-and-accesslogs/
@@ -26,8 +26,9 @@ Observability
 - [X] Machine CPU/RAM/Disk stats
 - [ ] Sentry or similar
 - [ ] Alerts on free disk space
-- [ ] Improve logging -> startup sequence, running migrations
+- [X] Improve logging -> startup sequence, running migrations
 - [X] clj-simple-stats -> better detect bots that pretend to be browsers
+- [ ] Aggregate basic traefik stats, send to Kula
 
 - https://github.com/logdyhq/logdy-core
 - https://github.com/K0lin/loglynx
