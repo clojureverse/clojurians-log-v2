@@ -130,15 +130,17 @@
           (map (juxt :name :id))
           data)))
 
-(def chan-cache (memo/ttl chan-cache :ttl/threshold 60000))
+(def chan-cache (memo/ttl chan-cache* :ttl/threshold 60000))
 
-(defn chan-slack-id->id-cache []
+(defn chan-slack-id->id-cache* []
   (let [sqlmap {:select [:id :slack-id]
                 :from [:channel]}
         data (db/execute! (sql/format sqlmap))]
     (into {}
           (map (juxt :slack-id :id))
           data)))
+
+(def chan-slack-id->id-cache (memo/ttl chan-slack-id->id-cache* :ttl/threshold 60000))
 
 (defn member-cache* []
   (let [sqlmap {:select [:id :slack-id]
@@ -148,7 +150,7 @@
           (map (juxt :slack-id :id))
           data)))
 
-(def member-cache (memo/ttl member-cache* :ttl/threshold 60000))
+(def member-cache (memo/ttl member-cache* :ttl/threshold 30000))
 
 (defn get-cache []
   {:chan-name->id (chan-cache)
