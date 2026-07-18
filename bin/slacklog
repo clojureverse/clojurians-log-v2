@@ -69,7 +69,7 @@
 
 (defn wrap-db-sys [cmd]
   (fn [opts]
-    (system/start! [:clojurians-log.db])
+    (system/start! [:clojurians-log/db])
     (cmd opts)))
 
 (def commands
