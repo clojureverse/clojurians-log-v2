@@ -1,9 +1,9 @@
-{:clojurians-log.sentry
+{:clojurians-log/sentry
  {:dsn               #config :sentry/dsn
   :debug?            true
   :trace-sample-rate 1.0}
 
- :clojurians-log.db
+ :clojurians-log/db
  {:hikari/config
   {:adapter       #config :db/type
    :username      #config :db/user
@@ -24,13 +24,14 @@
    ;; :register-mbeans       false
    }}
 
- :clojurians-log.http
- {:port #config :http/port}
+ :clojurians-log/http
+ {:port #config :http/port
+  :_db  #makina/ref :clojurians-log/db}
 
- :clojurians-log.styles
+ :clojurians-log/styles
  {:precompile #config :styles/precompile}
 
- :clojurians-log.slack-unix-socket
+ :clojurians-log/slack-unix-socket
  {:socket-path #config :slack/unix-socket
   :retry-ms    #config :slack/unix-socket-retry-ms
-  :db          #makina/ref :clojurians-log.db}}
+  :db          #makina/ref :clojurians-log/db}}

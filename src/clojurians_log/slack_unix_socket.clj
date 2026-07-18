@@ -43,7 +43,8 @@
       (log/debug :stream-opened events)
       (loop []
         (when-let [json (.get events)]
-          (import-event json)
+          (when-let [e (get json "event")]
+            (import-event e))
           (recur))))
     (catch ClosedChannelException _)
     (catch Exception e
