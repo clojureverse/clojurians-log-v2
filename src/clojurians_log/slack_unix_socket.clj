@@ -33,13 +33,13 @@
 (defn read-loop
   "Read consecutive JSON values off the channel, calling `handle-event` on each.
   Returns when the channel is closed or EOF is reached."
-  [^SocketChannel channel handle-event]
+  [^SocketChannel channel]
   (try
     (with-open [events (charred/read-json-supplier
                         (Channels/newInputStream channel)
                         {:eof-error? false
                          :eof-value nil})]
-      (run! handle-event events))
+      (run! import-event events))
     (catch ClosedChannelException _)
     (catch Exception e
       (log/warn :slack-unix-socket/read-loop-aborted {}
@@ -50,7 +50,7 @@
   connection is lost or can't be established. The current connection is kept in
   the `channel` atom, so it can be closed on stop. Repeated connection failures
   only warn once."
-  [{:keys [socket-path retry-ms channel]} handle-event]
+  [{:keys [socket-path retry-ms channel]}]
   (try
     (loop [warned? false]
       (let [conn (try
@@ -65,7 +65,7 @@
         (when conn
           (reset! channel conn)
           (log/info :slack-unix-socket/connected {:path socket-path})
-          (read-loop conn handle-event)
+          (read-loop conn)
           (log/warn :slack-unix-socket/disconnected {:path socket-path
                                                      :retry-ms retry-ms}))
         (Thread/sleep ^long retry-ms)
@@ -75,25 +75,9 @@
 (def component
   {:start
    (fn [{:keys [socket-path retry-ms] :as opts}]
-     (if-not socket-path
-       opts
-       (assoc opts
-              :retry-ms (or retry-ms 5000)
-              :channel (atom nil)
-              :thread (doto (Thread. #(run-loop opts import-event)
-                                     "slack-unix-socket-reader")
-                        (.setDaemon true)
-                        (.start)))))
-   :stop
-   (fn [{:keys [running? channel ^Thread thread]}]
-     (when running?
-       (reset! running? false))
-     (when-let [^SocketChannel ch (and channel @channel)]
-       (.close ch))
-     (when thread
-       (.interrupt thread)))})
-
-(comment
-  (def ch (connect "/tmp/test.slack.socket"))
-  (read-loop ch prn)
-  (.close ch))
+     (when socket-path
+       (future
+         (-> opts
+             (assoc :retry-ms retry-ms
+                    :channel  (atom nil))
+             run-loop))))})
