@@ -95,7 +95,7 @@
   :init init
   :flags flags
   :commands commands
-  :middleware [wrap-verbosity]})
+  :middleware [#_wrap-verbosity]})
 
 ;; Local Variables:
 ;; mode:clojure
