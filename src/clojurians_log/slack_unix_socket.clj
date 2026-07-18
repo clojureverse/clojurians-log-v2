@@ -51,33 +51,35 @@
   the `channel` atom, so it can be closed on stop. Repeated connection failures
   only warn once."
   [{:keys [socket-path retry-ms channel]}]
-  (try
-    (loop [warned? false]
-      (let [conn (try
-                   (connect socket-path)
-                   (catch Exception e
-                     (when-not warned?
-                       (log/warn :slack-unix-socket/connect-failed
-                                 {:path socket-path
-                                  :retry-ms retry-ms}
-                                 :exception e))
-                     nil))]
-        (when conn
-          (reset! channel conn)
-          (log/info :slack-unix-socket/connected {:path socket-path})
-          (read-loop conn)
-          (log/warn :slack-unix-socket/disconnected {:path socket-path
-                                                     :retry-ms retry-ms}))
-        (Thread/sleep ^long retry-ms)
-        (recur (nil? conn))))
-    (catch InterruptedException _)))
+  (loop [warned? false]
+    (let [conn (try
+                 (connect socket-path)
+                 (catch Exception e
+                   (when-not warned?
+                     (log/warn :slack-unix-socket/connect-failed
+                               {:path socket-path
+                                :retry-ms retry-ms}
+                               :exception e))
+                   nil))]
+      (when conn
+        (reset! channel conn)
+        (log/info :slack-unix-socket/connected {:path socket-path})
+        (read-loop conn)
+        (log/warn :slack-unix-socket/disconnected {:path socket-path
+                                                   :retry-ms retry-ms}))
+      (Thread/sleep ^long retry-ms)
+      (recur (nil? conn)))))
 
 (def component
   {:start
    (fn [{:keys [socket-path retry-ms] :as opts}]
      (when socket-path
+       (log/info :unix-socket/connection {:path socket-path})
        (future
-         (-> opts
-             (assoc :retry-ms retry-ms
-                    :channel  (atom nil))
-             run-loop))))})
+         (try
+           (-> opts
+               (assoc :retry-ms retry-ms
+                      :channel  (atom nil))
+               run-loop)
+           (catch Exception e
+             (log/error :unix-socket/failed {:path socket-path} :exception e))))))})
