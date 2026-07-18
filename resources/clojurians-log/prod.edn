@@ -1,1 +1,2 @@
-{:styles/precompile true}
+{:styles/precompile true
+ :slack/unix-socket "/srv/clojurians-log/slack-event-sink/.slack.socket"}

@@ -5,7 +5,7 @@
 
   ;; app setup & config
   aero/aero                      {:mvn/version "1.1.6"}
-  ch.qos.logback/logback-classic {:mvn/version "1.5.37"}
+  ch.qos.logback/logback-classic {:mvn/version "1.5.38"}
 
   com.lambdaisland/config  {:mvn/version "0.15.56"}
   com.lambdaisland/makina  {:mvn/version "0.7.32"}
@@ -19,16 +19,15 @@
   io.github.tonsky/clj-simple-stats {:mvn/version "1.2.0"}
 
   ;; styling
-  com.lambdaisland/ornament {:local/root "/home/arne/lambdaisland/ornament"} #_{:mvn/version "1.17.150"}
+  com.lambdaisland/ornament {:mvn/version "1.17.150"}
 
   ;; data formats
   camel-snake-kebab/camel-snake-kebab   {:mvn/version "0.4.3"}
-  com.cnuernber/charred                 {:mvn/version "1.039"}
-  com.lambdaisland/hiccup               {:local/root "/home/arne/lambdaisland/hiccup"}#_{:mvn/version "0.14.67"}
+  com.cnuernber/charred                 {:mvn/version "1.041"}
+  com.lambdaisland/hiccup               {:mvn/version "0.14.67"}
   lambdaisland/uri                      {:mvn/version "1.19.155"}
   markdown-to-hiccup/markdown-to-hiccup {:mvn/version "0.6.2"}
   metosin/malli                         {:mvn/version "0.20.1"}
-  enlive/enlive {:local/root "/home/arne/repos/enlive"}
 
   ;; utilities
   org.clojure/core.memoize {:mvn/version "1.2.281"}
@@ -38,14 +37,14 @@
 
   ;; db
   com.github.seancorfield/next.jdbc {:mvn/version "1.3.1118"}
-  org.postgresql/postgresql         {:mvn/version "42.7.12"}
+  org.postgresql/postgresql         {:mvn/version "42.7.13"}
   com.github.seancorfield/honeysql  {:mvn/version "2.7.1399"}
-  migratus/migratus                 {:mvn/version "1.6.6"}
+  migratus/migratus                 {:mvn/version "1.6.7"}
   clj-pgcopy/clj-pgcopy             {:mvn/version "0.1.3"}
   hikari-cp/hikari-cp               {:mvn/version "4.1.0"}
 
   ;; error
-  io.sentry/sentry {:mvn/version "8.47.0"}
+  io.sentry/sentry {:mvn/version "8.49.0"}
   }
 
  :aliases
@@ -55,6 +54,6 @@
    :jvm-opts    ["-Duser.timezone=UTC"]}
 
   :prof
-  {:jvm-opts ["-Djdk.attach.allowAttachSelf=true" "-XX:+UnlockDiagnosticVMOptions" "-XX:+DebugNonSafepoints"]
+  {:jvm-opts   ["-Djdk.attach.allowAttachSelf=true" "-XX:+UnlockDiagnosticVMOptions" "-XX:+DebugNonSafepoints"]
    :extra-deps {com.clojure-goes-fast/clj-async-profiler {:mvn/version "1.7.0"}}}
   }}

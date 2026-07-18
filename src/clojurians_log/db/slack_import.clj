@@ -1,4 +1,5 @@
 (ns clojurians-log.db.slack-import
+  "Handle import of slack events as coming from event callback/socket API"
   (:require
    [clojurians-log.db :as db]
    [clojurians-log.db.import :as import]

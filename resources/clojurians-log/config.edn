@@ -10,6 +10,8 @@
  :http/port 9090
 
  :slack/bot-token "" #_ "xoxb-12345-67890"
+ :slack/unix-socket nil
+ :slack/unix-socket-retry-ms 5000
 
  :styles/precompile false
  }

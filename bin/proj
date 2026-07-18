@@ -1,0 +1,15 @@
+#!/usr/bin/env bb
+
+(ns proj (:require [lioss.main :as lioss]))
+
+(lioss/main
+ {:license        :agpl
+  :group-id       "org.clojureverse"
+  :inception-year 2021
+  :description    "Backend and UI for https://clojurians-log.clojureverse.org"
+  :authors        ["Mitesh Shah"
+                   "Arne Brasseur"]})
+
+;; Local Variables:
+;; mode:clojure
+;; End:

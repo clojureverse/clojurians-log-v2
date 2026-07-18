@@ -28,4 +28,9 @@
  {:port #config :http/port}
 
  :clojurians-log.styles
- {:precompile #config :styles/precompile}}
+ {:precompile #config :styles/precompile}
+
+ :clojurians-log.slack-unix-socket
+ {:socket-path #config :slack/unix-socket
+  :retry-ms    #config :slack/unix-socket-retry-ms
+  :db          #makina/ref :clojurians-log.db}}
