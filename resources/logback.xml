@@ -13,17 +13,6 @@
     </encoder>
   </appender>
 
-  <appender name="CLOUD" class="com.google.cloud.logging.logback.LoggingAppender">
-    <!-- Optional : filter logs at or above a level -->
-    <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-      <level>INFO</level>
-    </filter>
-    <log>application.log</log> <!-- Optional : default java.log -->
-    <!-- <resourceType>gae_app</resourceType> <!-\- Optional : default: auto-detected, fallback: global -\-> -->
-    <!-- <enhancer>com.example.logging.logback.enhancers.ExampleEnhancer</enhancer> <!-\- Optional -\-> -->
-    <flushLevel>INFO</flushLevel> <!-- Optional : default ERROR -->
-  </appender>
-
   <!-- By default, log INFO and above.  -->
   <root level="INFO">
     <appender-ref ref="STDOUT" />

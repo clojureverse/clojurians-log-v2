@@ -78,7 +78,7 @@
 (def component
   {:start
    (fn [{:keys [socket-path retry-ms] :as opts}]
-     (log/info :unix-socket/connection {:path socket-path})
+     (log/info :unix-socket/starting {:path socket-path})
      (when socket-path
        (future
          (try
