@@ -35,7 +35,8 @@
 (defn spit-styles []
   (require 'clojurians-log.http) ;; make sure all components are loaded
   (let [styles (o/defined-styles {:compress? false})]
-    (println "Writing assets/ornament.css" (alength (.getBytes ^String styles)) "bytes")
+    (log/info :ornament/spit-style {:message "Writing assets/ornament.css"
+                                    :bytes (alength (.getBytes ^String styles))})
     (spit "assets/ornament.css" styles)))
 
 (defn component [{:keys [precompile]}]

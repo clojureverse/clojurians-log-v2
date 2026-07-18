@@ -1,19 +1,12 @@
 <!-- Logback configuration. See http://logback.qos.ch/manual/index.html 
      Scan logback.xml for changes, so you can tweak log levels without a restart -->
 <configuration scan="true" scanPeriod="10 seconds">
-
-  <!-- Silence Logback's own status messages about config parsing
-       https://github.com/nextjournal/nextjournal/issues/2526 -->
-  <statusListener class="ch.qos.logback.core.status.NopStatusListener" />
-
-  <!-- Console output -->
   <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
     <encoder>
       <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %highlight(%-5level) %logger{36} - %msg%n</pattern>
     </encoder>
   </appender>
 
-  <!-- By default, log INFO and above.  -->
   <root level="INFO">
     <appender-ref ref="STDOUT" />
   </root>
@@ -30,5 +23,4 @@
   <logger name="co.gaiwan" level="ALL" />
   <logger name="lambdaisland" level="ALL" />
   <logger name="clojurians-log" level="ALL" />
-  
 </configuration>

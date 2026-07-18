@@ -80,7 +80,8 @@
                "api-channels" #'import-api-channels
                "export <dir>" #'import-export]
     :middleware [wrap-db-sys]}
-   "run" {:command #'run}])
+   "run" {:command #'run}
+   "start" {:command #'run}])
 
 (def flags
   (conj

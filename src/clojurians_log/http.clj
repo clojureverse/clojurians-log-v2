@@ -4,6 +4,7 @@
    [clojurians-log.assets :as assets]
    [clojurians-log.config :as config]
    [clojurians-log.routes :as routes]
+   [io.pedestal.log :as log]
    [lambdaisland.hiccup :as hiccup]
    [muuntaja.core :as m]
    [muuntaja.format.core :as muuntaja-format]
@@ -74,7 +75,7 @@
 (def component
   {:start
    (fn [{:keys [port]}]
-     (println (str "Starting jetty on http://localhost:" port))
+     (log/info :jetty/starting {:port port})
      (jetty/run-jetty (if (config/get :app/rebuild-router-on-each-request)
                         #((app) %)
                         (app))

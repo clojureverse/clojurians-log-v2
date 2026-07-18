@@ -5,12 +5,12 @@
 
   ;; app setup & config
   aero/aero                      {:mvn/version "1.1.6"}
-  ch.qos.logback/logback-classic {:mvn/version "1.5.38"}
+  com.lambdaisland/config        {:mvn/version "0.15.56"}
+  com.lambdaisland/makina        {:mvn/version "0.8.37"}
 
-  com.lambdaisland/config  {:mvn/version "0.15.56"}
-  com.lambdaisland/makina  {:mvn/version "0.8.37"}
-  io.pedestal/pedestal.log {:mvn/version "0.8.1"}
-  lambdaisland/glogi       {:mvn/version "1.4.177"}
+  io.pedestal/pedestal.log       {:mvn/version "0.8.1"}
+  lambdaisland/glogi             {:mvn/version "1.4.177"}
+  ch.qos.logback/logback-classic {:mvn/version "1.5.38"}
 
   ;; http
   ring/ring                         {:mvn/version "1.15.5"}
