@@ -1,4 +1,5 @@
 (ns clojurians-log.db.slack-export-import
+  "Import a slack export, made through the admin web interface"
   (:require
    [camel-snake-kebab.core :as csk]
    [charred.api :as charred]

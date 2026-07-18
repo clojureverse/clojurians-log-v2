@@ -6,7 +6,7 @@
    [lambdaisland.glogc :as log]))
 
 (defmulti from-event
-  "Expects slack socket live events as maps in kebab case keywords"
+  "Expects slack socket live events as maps with string keys"
   (fn [{:strs [type subtype]} cache]
     [type subtype]))
 
