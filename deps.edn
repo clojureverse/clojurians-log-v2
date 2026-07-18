@@ -33,7 +33,7 @@
   org.clojure/core.memoize {:mvn/version "1.2.281"}
 
   ;; Slack SDK
-  co.gaiwan/clj-slack {:local/root "../clj-slack"}
+  com.lambdaisland/clj-slack {:mvn/version "0.3.150"}
 
   ;; db
   com.github.seancorfield/next.jdbc {:mvn/version "1.3.1118"}

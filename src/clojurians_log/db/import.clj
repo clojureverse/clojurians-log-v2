@@ -1,7 +1,7 @@
 (ns clojurians-log.db.import
   (:require
    [clojure.string :as string]
-   [lambdaisland.glogc :as log]
+   [io.pedestal.log :as log]
    [clojurians-log.db.queries :as queries]
    [clojurians-log.time-utils :as time-utils]
    [clojurians-log.utils :as utils]))

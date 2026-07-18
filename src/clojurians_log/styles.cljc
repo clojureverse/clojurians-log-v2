@@ -1,6 +1,7 @@
 (ns clojurians-log.styles
   "Fixed styles and style compilation logic"
   (:require
+   [io.pedestal.log :as log]
    [lambdaisland.ornament :as o]))
 
 (o/defrules global-styles

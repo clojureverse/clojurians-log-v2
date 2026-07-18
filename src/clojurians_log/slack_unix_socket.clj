@@ -10,7 +10,7 @@
    [charred.api :as charred]
    [clojurians-log.db.queries :as queries]
    [clojurians-log.db.slack-import :as slack-import]
-   [lambdaisland.glogc :as log])
+   [io.pedestal.log :as log])
   (:import
    (java.net UnixDomainSocketAddress)
    (java.nio.channels Channels ClosedChannelException SocketChannel)))

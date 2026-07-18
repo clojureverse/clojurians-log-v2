@@ -1,4 +1,4 @@
-#!/usr/bin/env -S clojure -M
+#!/usr/bin/env -S clojure -J-Dclojure.main.report=stderr -M
 
 (ns bin.slacklog
   (:require

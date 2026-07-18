@@ -4,7 +4,7 @@
    [clojurians-log.db :as db]
    [clojurians-log.db.import :as import]
    [honey.sql :as sql]
-   [lambdaisland.glogc :as log]))
+   [io.pedestal.log :as log]))
 
 (defmulti from-event
   "Expects slack socket live events as maps with string keys"
