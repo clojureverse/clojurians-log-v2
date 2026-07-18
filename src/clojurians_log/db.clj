@@ -7,7 +7,7 @@
    [next.jdbc.date-time :as jdbc.date-time]))
 
 (defn conn []
-  (system/component :clojurians-log.db))
+  (system/component :clojurians-log/db))
 
 (defn get-migration-config
   ([]
