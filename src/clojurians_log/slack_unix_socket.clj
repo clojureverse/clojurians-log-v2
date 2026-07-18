@@ -25,6 +25,7 @@
   "Import a single Slack event (map with string keys)"
   [event]
   (try
+    (log/debug :socket/got-event event)
     (slack-import/from-event event (queries/get-cache))
     (catch Exception e
       (log/error :slack-unix-socket/import-failed {:event event}
@@ -39,7 +40,11 @@
                         (Channels/newInputStream channel)
                         {:eof-error? false
                          :eof-value nil})]
-      (run! import-event events))
+      (log/debug :stream-opened events)
+      (loop []
+        (when-let [json (.get events)]
+          (import-event json)
+          (recur))))
     (catch ClosedChannelException _)
     (catch Exception e
       (log/warn :slack-unix-socket/read-loop-aborted {}
@@ -73,13 +78,14 @@
 (def component
   {:start
    (fn [{:keys [socket-path retry-ms] :as opts}]
+     (log/info :unix-socket/connection {:path socket-path})
      (when socket-path
-       (log/info :unix-socket/connection {:path socket-path})
        (future
          (try
            (-> opts
                (assoc :retry-ms retry-ms
                       :channel  (atom nil))
                run-loop)
+           (log/warn :socket/run-loop-finished {})
            (catch Exception e
              (log/error :unix-socket/failed {:path socket-path} :exception e))))))})
