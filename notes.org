@@ -14,6 +14,7 @@ Bugs/missing/improvements
 - [ ] Nicer date format on messages
 - [ ] favicon.ico
 - [ ] Handle files/images
+- [ ] Backfill on request / on invite of @logbot2
 
 Data import
 - [X] Connect slack-event-sink via socket
@@ -42,6 +43,8 @@ Bots/scrapers
 - [ ] robots.txt
 - [ ] AI scraper denylist https://github.com/bitwire-it/ipblocklist
 - [ ] honeypot link -> block
+- [ ] hide stats from bots
 
 Backup
 - [ ] Backup to rsync.net
+
