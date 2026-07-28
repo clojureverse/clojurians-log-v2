@@ -46,7 +46,7 @@
                  :body content
                  :headers {"Content-Type" content-type
                            "Content-Length" (str size)
-                           "Cache-Control" "max-age=600"
+                           "Cache-Control" (str "max-age=" (* 60 60 24))
                            "ETag" etag}}
         head-res (assoc get-res :body "")
         not-modified {:status 304 :body ""}]
