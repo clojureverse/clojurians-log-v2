@@ -15,6 +15,7 @@ Bugs/missing/improvements
 - [ ] favicon.ico
 - [ ] Handle files/images
 - [ ] Backfill on request / on invite of @logbot2
+- [ ] channel page doesn't show full date range
 
 Data import
 - [X] Connect slack-event-sink via socket
