@@ -104,7 +104,7 @@ To use pgcli instead:
 
 ``` sh
 pip install -U pgcli
-make pgcli
+pgcli -h localhost -p 54321 -d clojurians_log -U myuser
 # if it asks for a pass enter "mypass"
 ```
 
@@ -120,14 +120,14 @@ To create new migration files, from the REPL run the following
 user> (go)
 Launching with profile  :dev
 :initiated
-user> (def mc (migrations-config))
-#'user/mc
-user> (require '[clojurians-log.db.migrations :as m])
+user> (require '[clojurians-log.db :as db])
 nil
+user> (def mc (db/get-migration-config))
+#'user/mc
 ;; now create first-time migrations or run unapplied migrations
-user> (m/migrate mc)
+user> (db/migrate mc)
 ;; create new migration sql files
-user> (m/create mc "add-name-to-user-table")
+user> (db/migrate-create "add-name-to-user-table")
 ```
 
 This will create two files, but just delete the down files as we don't want to rollback.

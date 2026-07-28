@@ -32,8 +32,8 @@
 (defn migrate
   ([]
    (migratus/migrate (get-migration-config)))
-  ([conn]
-   (migratus/migrate (get-migration-config conn))))
+  ([migration-config]
+   (migratus/migrate migration-config)))
 
 (defn rollback
   "rollback the migration with the latest timestamp"
