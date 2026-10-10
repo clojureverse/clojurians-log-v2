@@ -38,6 +38,10 @@
   "Import an archive as created by slack-event-sink"
   [{:keys [dir]}]
   (let [cache (qry/get-cache)]
+    (when (.exists (io/file dir "users.edn"))
+      (api-import/import-users! (read-string (slurp (io/file dir "users.edn")))))
+    (when (.exists (io/file dir "channels.edn"))
+      (api-import/import-channels! (read-string (slurp (io/file dir "channels.edn")))))
     (run! #(si/from-event % cache) (raw/dir-event-seq dir))))
 
 (defn import-api-users

@@ -1,4 +1,6 @@
-{:deps {com.lambdaisland/launchpad {:mvn/version "0.53.238-alpha"}
-        com.lambdaisland/cli       {:mvn/version "1.30.130"}
-        lambdaisland/open-source   {:git/url "https://github.com/lambdaisland/open-source"
-                                    :git/sha "b0d1fe78a49390535a8f1fec8a4507b73d746359"}}}
+{:deps
+ {com.lambdaisland/launchpad  {:mvn/version "0.56.251-alpha"}
+  com.lambdaisland/cli        {:mvn/version "1.31.133"}
+  com.lambdaisland/shellutils {:mvn/version "0.3.20"}
+  lambdaisland/open-source    {:git/url "https://github.com/lambdaisland/open-source"
+                               :git/sha "9719c18fff5a1ed41ad1929d67d8c4155662e09d"}}}

@@ -1,15 +1,40 @@
 #!/usr/bin/env bb
 
-(require '[lambdaisland.cli :as cli])
+(require
+ '[lambdaisland.cli :as cli]
+ '[lambdaisland.shellutils :as su])
 
-(def init {})
+(def init
+  (merge 
+   (read-string (slurp "resources/clojurians-log/config.edn"))
+   (when (.exists (io/file "config.local.edn"))
+     (read-string (slurp "config.local.edn")))))
 
 (defn initialize-local-files
   "Create local files which are not checked in"
   [_]
-  (spit "deps.local.edn" "{:launchpad/aliases [:dev]}"))
+  (if (.exists (io/file  "deps.local.edn"))
+    (println "Skipping deps.local.edn, file already exists")
+    (do
+      (println "Creating deps.local.edn")
+      (spit  "deps.local.edn" "{:launchpad/aliases [:dev]\n :launchpad/options {:go true}}")))
+  (if (.exists (io/file  "config.local.edn"))
+    (println "Skipping config.local.edn, file already exists")
+    (do
+      (println "Creating config.local.edn")
+      (spit "config.local.edn" ";; Override values from resources/clojurians-log/config.edn\n{#_#_:slack/bot-token \"xoxb-...\"}"))))
 
-(def commands ["init" #'initialize-local-files])
+(defn psql
+  "Get a postgresql REPL
+
+  Honors config.edn and config.local.edn."
+  [{:db/keys! [user name port]}]
+  (su/spawn "docker" "compose" "exec" "-it" "db" "psql" "-U" user "-h" "127.0.0.1" "--port" (str port) name))
+
+(def commands
+  ["init" #'initialize-local-files
+   "psql" #'psql
+   ])
 
 (def flags
   ["-v, --verbose" "Increase verbosity"
