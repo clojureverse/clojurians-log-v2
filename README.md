@@ -60,6 +60,10 @@ then run
 bin/slacklog import archive ../clojurians-log-demo-data
 ```
 
+twice.
+
+If you only run it once, you might see no search results because some foreign keys might not be set yet.
+
 ## Capturing Slack history
 
 The accompanying
